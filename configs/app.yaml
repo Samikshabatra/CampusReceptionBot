@@ -35,7 +35,7 @@ vision:                 # face boxes are fractions of the camera frame
   haar_min_neighbors: 5
   frame_interval_ms: 200
 speech:
-  model: base.en        # faster-whisper; small.en is more accurate but slower
+  model: small          # multilingual faster-whisper (English, Hindi, Kannada)
   compute_type: int8
   beam_size: 1
   vad_rms_threshold: 0.015

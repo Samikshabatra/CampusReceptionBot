@@ -38,7 +38,7 @@ class VisionConfig(BaseModel):
 class SpeechConfig(BaseModel):
     """Speech-to-text and the browser's voice activity detection."""
 
-    model: str = "base.en"
+    model: str = "small"  # multilingual: English, Hindi and Kannada
     compute_type: str = "int8"
     beam_size: int = 1
     vad_rms_threshold: float = 0.015
@@ -53,6 +53,11 @@ class SpeechConfig(BaseModel):
         "CHRIST University, Central Block, room 806, xerox, CCD, Gourmet, MCA, BCA, MBA, "
         "MSc AI and ML, library, admissions, Health Centre, Sky View Studio"
     )
+    # Short native-script hints keep Whisper writing Hindi/Kannada in their own scripts.
+    native_hints: dict[str, str] = {
+        "hi": "पुस्तकालय, कमरा, फीस, प्रवेश, कार्यालय, समय",
+        "kn": "ಗ್ರಂಥಾಲಯ, ಕೊಠಡಿ, ಶುಲ್ಕ, ಪ್ರವೇಶ, ಕಚೇರಿ, ಸಮಯ",
+    }
 
 
 class KioskConfig(BaseModel):
