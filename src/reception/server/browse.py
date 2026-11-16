@@ -55,11 +55,12 @@ def browse_router(get_assistant: Callable[[], Assistant]) -> APIRouter:
         out = []
         for dept, target in kb.departments.items():
             count = sum(c.department == dept for c in kb.courses.values())
-            floor = None
+            floor_id = floor = None
             if target != "not_in_central_block":
                 ids = kb.groups.get(target, [target])
-                floor = floor_name(kb.places[ids[0]].floor)
-            out.append({"name": dept, "count": count, "floor_name": floor})
+                floor_id = kb.places[ids[0]].floor
+                floor = floor_name(floor_id)
+            out.append({"name": dept, "count": count, "floor": floor_id, "floor_name": floor})
         return sorted(out, key=lambda d: (d["floor_name"] is None, d["name"]))
 
     @r.get("/courses")

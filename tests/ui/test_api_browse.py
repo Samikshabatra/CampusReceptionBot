@@ -39,7 +39,7 @@ def test_places_lists_named_places(client: TestClient) -> None:
 def test_departments(client: TestClient) -> None:
     deps = {d["name"]: d for d in client.get("/api/departments").json()}
     cs = deps["Department of Computer Science"]
-    assert cs["count"] == 9 and cs["floor_name"] == "8th floor"
+    assert cs["count"] == 9 and cs["floor_name"] == "8th floor" and cs["floor"] == "8"
     assert deps["Department of Commerce"]["floor_name"] is None
 
 
