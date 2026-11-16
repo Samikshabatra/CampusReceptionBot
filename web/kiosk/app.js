@@ -1,4 +1,5 @@
 // Central Block kiosk front end: views, answers, speech. Camera + mic live in av.js.
+import { t, getLang, setLang, locale, applyStatic } from "/static/i18n.js?v=9";
 const $ = (s, root = document) => root.querySelector(s);
 const $$ = (s, root = document) => [...root.querySelectorAll(s)];
 const body = document.body;
@@ -59,14 +60,14 @@ const iconNode = (name) => svgNode(icon(name));
 async function getJSON(url) { const r = await fetch(url); if (!r.ok) throw new Error(`${url}: ${r.status}`); return r.json(); }
 
 // ---------------------------------------------------------------- state + status
-const STATUS = { idle: "Ready", listening: "Listening", thinking: "Thinking", answering: "Answering",
-  navigating: "Navigating", handover: "Reception" };
+const STATUS = { idle: "ready", listening: "listening", thinking: "thinking", answering: "answering",
+  navigating: "navigating", handover: "handover" };
 function setState(state) {
   // "Listening" only while the visitor has the microphone switched on.
   if (state === "listening" && body.dataset.mic !== "on") state = "idle";
   body.dataset.state = state;
   const visitor = body.dataset.presence === "yes" && state === "idle";
-  $("#status-text").textContent = visitor ? "Visitor Detected" : STATUS[state] || state;
+  $("#status-text").textContent = visitor ? t("visitor_detected") : STATUS[state] ? t(STATUS[state]) : state;
 }
 function setView(view) {
   if (body.dataset.view === view) return;
@@ -104,6 +105,7 @@ function connect() {
     if (msg.type === "response") showResponse(msg.data);
     else if (msg.type === "transcript") { if (msg.text) addVisitor(msg.text); }
     else if (msg.type === "noise") showNoiseHint();
+    else if (msg.type === "language") setLang(msg.lang);
     else if (msg.type === "banner") showBanner(msg.seconds);
     else if (msg.type === "session_end") resetVisitor(false);
     else if (msg.type === "presence") { body.dataset.presence = msg.present ? "yes" : "no"; setState(body.dataset.state); }
@@ -111,15 +113,25 @@ function connect() {
     else if (msg.type === "error") console.warn("server:", msg.message);
     handlers.forEach((fn) => fn(msg));
   };
-  ws.onclose = () => { $("#status-text").textContent = "Reconnecting"; setTimeout(connect, 1500); };
+  ws.onclose = () => { $("#status-text").textContent = t("reconnecting"); setTimeout(connect, 1500); };
 }
 
-export function ask(text) {
-  const t = text.trim();
-  if (!t) return;
-  addVisitor(t);
+// `shown` is what the visitor sees in their language when the question sent is English (buttons).
+export function ask(text, shown) {
+  const q = text.trim();
+  if (!q) return;
+  stopSpeaking(); // a new question always interrupts the current answer
+  addVisitor(shown || q);
   if (body.dataset.view === "welcome") setView("chat");
-  sendRaw({ type: "ask", text: t });
+  sendRaw({ type: "ask", text: q });
+  resetIdle();
+}
+// The visitor chose a language: switch the screen now; the server confirms and greets in it.
+function chooseLanguage(lang) {
+  stopSpeaking();
+  setLang(lang);
+  sendRaw({ type: "language", lang });
+  if (body.dataset.view === "welcome") setView("chat");
   resetIdle();
 }
 
@@ -127,7 +139,8 @@ let idleTimer;
 const IDLE_MS = 120_000;
 function resetIdle() { clearTimeout(idleTimer); idleTimer = setTimeout(() => resetVisitor(true), IDLE_MS); }
 function resetVisitor(tellServer) {
-  speechSynthesis.cancel();
+  stopSpeaking();
+  setLang("en"); // every new visitor starts in English with the picker on screen
   window.dispatchEvent(new CustomEvent("kiosk:reset"));
   $("#log").replaceChildren();
   route = null;
@@ -138,13 +151,14 @@ function resetVisitor(tellServer) {
 }
 
 // ---------------------------------------------------------------- speech out
-let voice = null;
-function pickVoice() {
+// English uses the browser's own voice; Hindi and Kannada use natural voices from /api/tts,
+// falling back to a browser voice for that language if the voice service is unreachable.
+function browserVoice(lang) {
   const vs = speechSynthesis.getVoices();
-  voice = vs.find((v) => v.lang === "en-IN") || vs.find((v) => v.lang.startsWith("en")) || null;
+  const code = { en: "en", hi: "hi", kn: "kn" }[lang] || "en";
+  return vs.find((v) => v.lang === `${code}-IN`) || vs.find((v) => v.lang.startsWith(code)) || null;
 }
-speechSynthesis.onvoiceschanged = pickVoice;
-pickVoice();
+speechSynthesis.onvoiceschanged = () => {};
 let speechSeq = 0;
 let currentAudio = null;
 // Stop talking immediately (the visitor interrupted by tapping the mic or typing).
@@ -154,20 +168,34 @@ export function stopSpeaking() {
   if (currentAudio) { currentAudio.pause(); currentAudio = null; }
   body.dataset.speaking = "no";
 }
-function speak(text, onEnd) {
+function speak(text, onEnd, lang = "en") {
   const mine = ++speechSeq;
   speechSynthesis.cancel();
   if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-  const u = new SpeechSynthesisUtterance(text);
-  if (voice) u.voice = voice;
-  u.rate = 0.98;
   body.dataset.speaking = "yes";
-  u.onend = u.onerror = () => {
-    if (mine !== speechSeq) return;
+  const done = () => {
+    if (mine !== speechSeq) return; // interrupted or replaced by a newer answer
+    currentAudio = null;
     body.dataset.speaking = "no";
     if (onEnd) onEnd();
   };
-  speechSynthesis.speak(u);
+  const viaBrowser = () => {
+    if (mine !== speechSeq) return;
+    const v = browserVoice(lang);
+    if (lang !== "en" && !v) { done(); return; } // no voice for this language: the text stays on screen
+    const u = new SpeechSynthesisUtterance(text);
+    if (v) u.voice = v;
+    u.lang = v ? v.lang : "en-IN";
+    u.rate = 0.98;
+    u.onend = u.onerror = done;
+    speechSynthesis.speak(u);
+  };
+  if (lang === "en") { viaBrowser(); return; }
+  const audio = new Audio(`/api/tts?lang=${lang}&text=${encodeURIComponent(text)}`);
+  currentAudio = audio;
+  audio.onended = done;
+  audio.onerror = () => { if (currentAudio === audio) { currentAudio = null; viaBrowser(); } };
+  audio.play().catch(() => { if (currentAudio === audio) { currentAudio = null; viaBrowser(); } });
 }
 
 // ---------------------------------------------------------------- chat
@@ -196,70 +224,72 @@ const inlineCard = {
   timings(d, r) {
     if (d.offices && d.library) {
       const row = (label, x) => el("div", { class: "hours-row" }, iconNode("clock"), el("span", {}, label),
-        el("span", { class: `badge ${x.today === "closed" ? "badge--closed" : "badge--open"}` }, x.today === "closed" ? "Closed today" : x.today));
-      return el("div", { class: "card answer-card" }, el("h3", { html: icon("building") + "Today in Central Block" }),
-        row("Offices", d.offices), row("Library", d.library));
+        el("span", { class: `badge ${x.today === "closed" ? "badge--closed" : "badge--open"}` }, x.today === "closed" ? t("closed_today") : x.today));
+      return el("div", { class: "card answer-card" }, el("h3", {}, iconNode("building"), t("today_in_block")),
+        row(t("offices"), d.offices), row(t("library"), d.library));
     }
     const cls = d.is_open ? "open" : d.on_lunch ? "lunch" : "closed";
-    const label = d.is_open ? "Open now" : d.on_lunch ? "Lunch break" : "Closed now";
-    const name = { offices: "Office hours", library: "Central Block Library", services: "Hours" }[d.name] || d.name;
+    const label = t(d.is_open ? "open_now" : d.on_lunch ? "lunch_break" : "closed_now");
+    const nameKey = { offices: "office_hours", library: "central_library", services: "hours" }[d.name];
+    const name = nameKey ? t(nameKey) : d.name;
     const rules = d.rules || {};
     const t12 = (hhmm) => { const [h, m] = hhmm.split(":").map(Number); const hr = h % 12 || 12; return `${hr}${m ? ":" + String(m).padStart(2, "0") : ""} ${h < 12 ? "am" : "pm"}`; };
-    const span = (x) => (Array.isArray(x) ? `${t12(x[0])} – ${t12(x[1])}` : x === "closed" ? "Closed" : "Same as Mon–Sat");
+    const span = (x) => (Array.isArray(x) ? `${t12(x[0])} – ${t12(x[1])}` : x === "closed" ? t("closed") : t("same_as_week"));
     const rows = [
-      ["Mon – Sat", span(rules.weekday)],
-      ...(rules.lunch ? [["Lunch break", span(rules.lunch)]] : []),
-      ["Third Saturday", span(rules.third_saturday)],
-      ["Sunday", span(rules.sunday)],
-      ["Vacation", span(rules.vacation)],
-      ["Public holidays", "Closed"],
+      [t("mon_sat"), span(rules.weekday)],
+      ...(rules.lunch ? [[t("lunch_break"), span(rules.lunch)]] : []),
+      [t("third_saturday"), span(rules.third_saturday)],
+      [t("sunday"), span(rules.sunday)],
+      [t("vacation"), span(rules.vacation)],
+      [t("public_holidays"), t("closed")],
     ];
     const table = el("div", {}, rows.map(([k, v]) => el("div", { class: "hours-row" }, iconNode("calendar"), el("span", {}, k), el("b", {}, v))));
-    const info = el("div", {}, el("h3", { html: icon("book") + name }),
-      el("p", {}, el("span", { class: `badge badge--${cls}` }, label), " Today: ", d.today), table,
-      d.verified === false ? el("p", { class: "warn" }, "These hours are not confirmed. Please check at reception.") : null,
+    const info = el("div", {}, el("h3", {}, iconNode("book"), name),
+      el("p", {}, el("span", { class: `badge badge--${cls}` }, label), ` ${t("today")} `, d.today), table,
+      d.verified === false ? el("p", { class: "warn" }, t("hours_unconfirmed")) : null,
       el("div", { class: "row-actions" },
         d.name === "library" || d.name === "Library"
-          ? el("button", { class: "pill-btn pill-btn--gold", type: "button", onclick: () => ask("Where is the library?") }, iconNode("pin"), "View on Map")
+          ? el("button", { class: "pill-btn pill-btn--gold", type: "button", onclick: () => ask("Where is the library?", t("view_on_map")) }, iconNode("pin"), t("view_on_map"))
           : null));
     const isLibrary = /library/i.test(d.name);
     const q = (r.qr || [])[0];
     return el("div", { class: "card answer-card" },
       isLibrary ? el("div", { class: "answer-media" }, el("img", { src: "/static/img/library.jpg", alt: "" }), info) : info,
-      q ? el("figure", { class: "qr qr--wide" }, svgNode(q.svg), el("figcaption", {}, "Scan to open the library website")) : null);
+      q ? el("figure", { class: "qr qr--wide" }, svgNode(q.svg), el("figcaption", {}, t("scan_library"))) : null);
   },
   text(d, r) {
     if (d.library_link) {
       const q = (r.qr || [])[0];
       return el("div", { class: "card answer-card" }, el("div", { class: "answer-media" },
         el("img", { src: "/static/img/library.jpg", alt: "" }),
-        el("div", {}, el("h3", { html: icon("book") + "Central Block Library" }),
-          el("p", {}, d.topic ? `To ${d.topic}, use the library website.` : "Find everything about the library on its website."),
+        el("div", {}, el("h3", {}, iconNode("book"), t("central_library")),
+          el("p", {}, d.topic ? t("library_topic", { topic: d.topic }) : t("library_site")),
           el("p", { class: "note" }, d.library_link.replace(/^https?:\/\//, "")),
           el("div", { class: "row-actions" },
-            el("button", { class: "pill-btn pill-btn--gold", type: "button", onclick: () => ask("What are the library timings?") }, iconNode("clock"), "Library timings"),
-            el("button", { class: "pill-btn", type: "button", onclick: () => ask("Where is the library?") }, iconNode("pin"), "View on Map")))),
-        q ? el("figure", { class: "qr qr--wide" }, svgNode(q.svg), el("figcaption", {}, "Scan to open the library website")) : null);
+            el("button", { class: "pill-btn pill-btn--gold", type: "button", onclick: () => ask("What are the library timings?", t("library_timings")) }, iconNode("clock"), t("library_timings")),
+            el("button", { class: "pill-btn", type: "button", onclick: () => ask("Where is the library?", t("view_on_map")) }, iconNode("pin"), t("view_on_map"))))),
+        q ? el("figure", { class: "qr qr--wide" }, svgNode(q.svg), el("figcaption", {}, t("scan_library"))) : null);
     }
     const passages = (d.passages || []).map((p) => el("li", {}, `${p.source}: ${p.text}`));
     return passages.length || (r.qr && r.qr.length)
       ? el("div", { class: "card answer-card" }, qrGrid(r.qr),
-        passages.length ? el("details", {}, el("summary", {}, "Where this answer comes from"), el("ul", { class: "note" }, passages)) : null)
+        passages.length ? el("details", {}, el("summary", {}, t("answer_source")), el("ul", { class: "note" }, passages)) : null)
       : null;
   },
   handover(d, r) {
-    return el("div", { class: "card answer-card" }, el("h3", { html: icon("alert") + "Please check with the reception desk" }),
-      el("p", { class: "note" }, "Reception is on the Ground floor. You can also call or email:"), qrGrid(r.qr),
-      r.maps && r.maps.length ? el("div", { class: "row-actions" }, goButton("Show route to the Health Centre", "navigate", "pin")) : null);
+    return el("div", { class: "card answer-card" }, el("h3", {}, iconNode("alert"), t("check_reception")),
+      el("p", { class: "note" }, t("reception_note")), qrGrid(r.qr),
+      r.maps && r.maps.length ? el("div", { class: "row-actions" }, goButton(t("route_health"), "navigate", "pin")) : null);
   },
   clarify(d) {
-    return el("div", { class: "options" }, d.options.map((o) =>
-      el("button", { class: "pill-btn", type: "button", onclick: () => onOption(o) }, o)));
+    const labels = d.option_labels || d.options;
+    return el("div", { class: "options" }, d.options.map((o, i) =>
+      el("button", { class: "pill-btn", type: "button", onclick: () => onOption(o, labels[i]) }, labels[i] || o)));
   },
   contacts(d, r) {
     const events = (d.events || []).map((e) => el("div", { class: "hours-row" }, iconNode("calendar"), el("span", {}, e.name), el("b", {}, e.when)));
     return el("div", { class: "card answer-card" }, events.length ? el("div", {}, events) : null, qrGrid(r.qr),
-      el("div", { class: "row-actions" }, goButton("All contacts", "contacts", "phone")));
+      el("div", { class: "row-actions" }, goButton(t("all_contacts"), "contacts", "phone")));
   },
 };
 
@@ -267,10 +297,10 @@ const OPTION_TEXT = {
   "Find a place": null, "Courses & fees": null, Timings: "What are the office timings?",
   Contacts: null, Events: null, "Talk to a person": "I want to talk to a person",
 };
-function onOption(o) {
+function onOption(o, label) {
   const view = { "Find a place": "navigate", "Courses & fees": "courses", Contacts: "contacts", Events: "events" }[o];
   if (view) { setView(view); return; }
-  ask(OPTION_TEXT[o] || o);
+  ask(OPTION_TEXT[o] || o, label);
 }
 
 // ---------------------------------------------------------------- responses
@@ -285,7 +315,7 @@ function showResponse(r) {
     if (body.dataset.view !== "welcome") setView("chat");
   } else if (kind === "map") {
     renderRoute(r);
-    addKiosk(r.speech, el("div", { class: "row-actions" }, goButton("Show the route", "navigate", "pin")));
+    addKiosk(r.speech, el("div", { class: "row-actions" }, goButton(t("show_route"), "navigate", "pin")));
     setView("navigate");
     next = "navigating";
   } else if (kind === "course_list") {
@@ -293,7 +323,7 @@ function showResponse(r) {
     const listLevel = d.level || "All";
     addKiosk(r.speech, el("div", { class: "row-actions" },
       el("button", { class: "pill-btn pill-btn--gold", type: "button", onclick: () => openCourses(listDept, null, listLevel) },
-        iconNode("cap"), "See the programmes")));
+        iconNode("cap"), t("see_programmes"))));
     openCourses(listDept, null, listLevel);
   } else if (kind === "course" || kind === "fees") {
     const cDept = d.department || null;
@@ -301,10 +331,10 @@ function showResponse(r) {
     const fees = kind === "fees";
     addKiosk(r.speech, el("div", { class: "row-actions" },
       el("button", { class: "pill-btn pill-btn--gold", type: "button", onclick: () => openCourses(cDept, cId, "All", fees) },
-        iconNode("cap"), "Programme details")), false);
+        iconNode("cap"), t("programme_details"))), false);
     openCourses(cDept, cId, "All", fees);
   } else if (kind === "events") {
-    addKiosk(r.speech, el("div", { class: "row-actions" }, goButton("Open the calendar", "events", "calendar")));
+    addKiosk(r.speech, el("div", { class: "row-actions" }, goButton(t("open_calendar"), "events", "calendar")));
     const first = d.items && d.items[0] && d.items[0].start;
     if (first) { const [y, m] = first.split("-").map(Number); cal.year = y; cal.month = m; }
     cal.highlight = (d.items || []).map((i) => i.name);
@@ -317,7 +347,7 @@ function showResponse(r) {
     setView("chat");
   }
   setState(next);
-  speak(r.speech, () => setState(r.handover_reason ? "handover" : "listening"));
+  speak(r.speech, () => setState(r.handover_reason ? "handover" : "listening"), r.lang || getLang());
   resetIdle();
 }
 
@@ -336,15 +366,15 @@ async function showMap(floor) {
 function floorPicker(onRoute, active) {
   $("#floor-picker").replaceChildren(...FLOOR_IDS.map((f) => el("button", {
     class: `floor-btn${onRoute.includes(f) ? " on-route" : ""}`, type: "button", "data-floor": f,
-    "aria-label": f === "B" ? "Basement" : f === "G" ? "Ground floor" : `Floor ${f}`, onclick: () => showMap(f),
+    "aria-label": f === "B" ? t("basement") : f === "G" ? t("ground_floor") : t("floor_n", { n: f }), onclick: () => showMap(f),
   }, f)));
   showMap(active);
 }
 function renderRoute(r) {
   route = r;
   const d = r.card.data;
-  const name = (d.target_names || [])[0] || "your destination";
-  $("#nav-title").textContent = `Route to ${name.replace(/\s*[,(].*$/, "")}`;
+  const name = (d.target_names || [])[0] || t("your_destination");
+  $("#nav-title").textContent = t("route_to", { name: name.replace(/\s*[,(].*$/, "") });
   $("#nav-lead").textContent = r.speech;
   const floors = r.maps.map((m) => m.floor);
   const dest = r.maps.length ? r.maps[Math.min(1, r.maps.length - 1)] : null;
@@ -353,20 +383,20 @@ function renderRoute(r) {
   const stepIcon = (s) => (/lift|stairs/i.test(s) ? "lift" : /corridor|turn/i.test(s) ? "turn" : "navigate");
   $("#nav-side").replaceChildren(
     el("ol", { class: "timeline" },
-      el("li", { class: "step step--start" }, el("span", { class: "step-icon", html: icon("pin") }), el("span", {}, el("b", {}, "Start: Reception"), "Ground floor")),
+      el("li", { class: "step step--start" }, el("span", { class: "step-icon", html: icon("pin") }), el("span", {}, el("b", {}, t("start_reception")), t("ground_floor"))),
       steps.map((s) => el("li", { class: "step" }, el("span", { class: "step-icon", html: icon(stepIcon(s)) }), el("span", {}, s))),
       el("li", { class: "step step--end" }, el("span", { class: "step-icon", html: icon("flag") }),
-        el("span", {}, el("b", {}, `Destination: ${name}`), dest ? dest.title : "", last ? el("span", { class: "note" }, el("br"), last) : null))),
-    el("p", { class: "nav-meta" }, `Floors on this route: ${floors.map((f) => (f === "G" ? "Ground" : f === "B" ? "Basement" : f)).join(" → ")}`),
-    el("div", { class: "row-actions" }, el("button", { class: "pill-btn", type: "button", onclick: () => { route = null; showPlaceBrowser(); } }, iconNode("search"), "Find another place")));
+        el("span", {}, el("b", {}, t("destination", { name })), dest ? dest.title : "", last ? el("span", { class: "note" }, el("br"), last) : null))),
+    el("p", { class: "nav-meta" }, `${t("floors_on_route")} ${floors.map((f) => (f === "G" ? t("ground") : f === "B" ? t("basement") : f)).join(" → ")}`),
+    el("div", { class: "row-actions" }, el("button", { class: "pill-btn", type: "button", onclick: () => { route = null; showPlaceBrowser(); } }, iconNode("search"), t("find_another"))));
   floorPicker(floors, dest ? dest.floor : "G");
 }
 let places = null;
 async function showPlaceBrowser() {
-  $("#nav-title").textContent = "Find a place";
-  $("#nav-lead").textContent = "Pick a place, or ask me. Directions start from Reception on the Ground floor.";
+  $("#nav-title").textContent = t("find_place");
+  $("#nav-lead").textContent = t("find_lead");
   places = places || (await getJSON("/api/places"));
-  const input = el("input", { placeholder: "Search rooms, offices, cafés…", "aria-label": "Search places" });
+  const input = el("input", { placeholder: t("search_places"), "aria-label": t("search_places") });
   const groups = el("div", { class: "place-groups" });
   const draw = () => {
     const q = input.value.trim().toLowerCase();
@@ -378,7 +408,7 @@ async function showPlaceBrowser() {
     }
     groups.replaceChildren(...[...byFloor].map(([floor, list]) => el("section", {}, el("h3", {}, floor),
       list.map((p) => el("button", { class: "place-btn", type: "button", onclick: () => ask(`Where is the ${p.name}?`) }, p.name)))));
-    if (!byFloor.size) groups.replaceChildren(el("p", { class: "note" }, "No place by that name. Try asking me instead."));
+    if (!byFloor.size) groups.replaceChildren(el("p", { class: "note" }, t("no_place")));
   };
   input.addEventListener("input", draw);
   draw();
@@ -393,11 +423,7 @@ async function loadCourses(dept) {
   departments = departments || (await getJSON("/api/departments"));
   const select = $("#dept-select");
   if (!select.options.length) {
-    const inBlock = departments.filter((d) => d.floor_name);
-    const outside = departments.filter((d) => !d.floor_name);
-    const opt = (d) => el("option", { value: d.name }, d.name);
-    select.append(el("option", { value: "" }, "All departments"),
-      el("optgroup", { label: "In Central Block" }, inBlock.map(opt)), el("optgroup", { label: "Other departments" }, outside.map(opt)));
+    fillDepartments(select);
     select.addEventListener("change", () => { courses.selected = null; loadCourses(select.value); });
   }
   if (dept !== undefined && dept !== null) courses.dept = dept;
@@ -407,26 +433,34 @@ async function loadCourses(dept) {
   drawCourses();
   if (!courses.selected && courses.items.length) selectCourse(courses.items[0].id);
 }
+function fillDepartments(select) {
+  const inBlock = departments.filter((d) => d.floor_name);
+  const outside = departments.filter((d) => !d.floor_name);
+  const opt = (d) => el("option", { value: d.name }, d.name);
+  select.replaceChildren(el("option", { value: "" }, t("all_departments")),
+    el("optgroup", { label: t("in_block") }, inBlock.map(opt)), el("optgroup", { label: t("other_depts") }, outside.map(opt)));
+  select.value = courses.dept;
+}
 function drawCourses() {
   const dept = departments.find((d) => d.name === courses.dept);
   $("#course-count").textContent = !courses.dept
-    ? `Programmes offered at Central Campus: ${courses.items.length}`
-    : `Programmes offered: ${courses.items.length}` + (dept && dept.floor_name ? ` · ${dept.floor_name}` : " · not in Central Block");
+    ? t("count_campus", { n: courses.items.length })
+    : t("count_dept", { n: courses.items.length }) + (dept && dept.floor_name ? ` · ${dept.floor_name}` : ` · ${t("not_in_block")}`);
   $("#level-chips").replaceChildren(...["All", "UG", "PG", "PhD"].map((lv) => el("button", {
     class: `chip${courses.level === lv ? " is-active" : ""}`, type: "button", "aria-pressed": courses.level === lv,
     onclick: () => { courses.level = lv; drawCourses(); },
-  }, lv)));
+  }, lv === "All" ? t("level_all") : lv)));
   const q = courses.query.toLowerCase();
   const list = courses.items.filter((c) => (courses.level === "All" || c.level === courses.level) && (!q || c.name.toLowerCase().includes(q)));
-  const levelName = { UG: "Undergraduate", PG: "Postgraduate", PhD: "Doctoral" };
+  const levelName = { UG: t("undergraduate"), PG: t("postgraduate"), PhD: t("doctoral") };
   $("#course-list").replaceChildren(...(list.length ? list.map((c) => el("li", {}, el("button", {
     class: `course-item${courses.selected === c.id ? " is-active" : ""}`, type: "button", onclick: () => selectCourse(c.id),
   }, el("span", { class: "ic", html: icon("cap") }), el("span", {}, el("b", {}, c.name), el("small", {}, [levelName[c.level] || c.level, c.duration, courses.dept ? null : c.department].filter(Boolean).join(" • "))),
-  iconNode("right")))) : [el("li", { class: "empty" }, "No programmes match. Try another level or search.")]));
+  iconNode("right")))) : [el("li", { class: "empty" }, t("no_match"))]));
   // The details panel must always show a programme from the visible list.
   if (!list.length) {
     courses.selected = null;
-    $("#course-detail").replaceChildren(el("p", { class: "empty" }, "No programme selected."));
+    $("#course-detail").replaceChildren(el("p", { class: "empty" }, t("none_selected")));
   } else if (!list.some((c) => c.id === courses.selected)) {
     selectCourse(list[0].id);
   }
@@ -439,13 +473,13 @@ async function selectCourse(id, showFees = false) {
   if (courses.selected !== id) return; // a newer selection arrived while this one loaded
   const c = data.course;
   const f = data.fees;
-  const desc = el("p", { class: "desc clamped" }, c.description || "No description has been published for this programme.");
+  const desc = el("p", { class: "desc clamped" }, c.description || t("no_description"));
   const years = Object.keys(f.years || {});
   const cats = years.length ? Object.keys(f.years[years[0]]) : [];
   const feeTable = el("div", { hidden: !showFees },
-    el("table", { class: "fees" }, el("thead", {}, el("tr", {}, el("th", {}, "Category"), years.map((y) => el("th", {}, `Year ${y}`)))),
+    el("table", { class: "fees" }, el("thead", {}, el("tr", {}, el("th", {}, t("category")), years.map((y) => el("th", {}, t("year_n", { n: y }))))),
       el("tbody", {}, cats.map((k) => el("tr", {}, el("th", {}, k), years.map((y) => el("td", {}, f.years[y][k])))))),
-    el("p", { class: "note" }, `Registration fee: ${f.registration_fee}. Academic year ${f.academic_year}, as published.`));
+    el("p", { class: "note" }, t("registration_fee", { fee: f.registration_fee, year: f.academic_year })));
   const dept = departments && departments.find((d) => d.name === c.department);
   $("#course-detail").replaceChildren(
     el("div", { class: "detail-hero" }, el("h2", {}, c.name)),
@@ -454,12 +488,12 @@ async function selectCourse(id, showFees = false) {
         c.duration ? el("li", { html: icon("hourglass") + c.duration }) : null,
         el("li", { html: icon("cap") + c.level }),
         c.semesters ? el("li", { html: icon("calendar") + c.semesters }) : null,
-        el("li", { html: icon("pin") + (dept && dept.floor_name ? dept.floor_name : "Not in Central Block") })),
+        el("li", {}, iconNode("pin"), dept && dept.floor_name ? dept.floor_name : t("not_in_block_cap"))),
       desc, feeTable,
-      c.verified ? null : el("p", { class: "warn" }, "This programme's name was missing in the source data and is unconfirmed."),
+      c.verified ? null : el("p", { class: "warn" }, t("unconfirmed_name")),
       el("div", { class: "row-actions" },
-        el("button", { class: "btn btn--solid", type: "button", onclick: (e) => { desc.classList.toggle("clamped"); e.currentTarget.lastChild.textContent = desc.classList.contains("clamped") ? "View Details" : "Show less"; } }, iconNode("right"), "View Details"),
-        el("button", { class: "btn btn--ghost", type: "button", onclick: () => { feeTable.hidden = !feeTable.hidden; } }, iconNode("book"), "Fee Structure")),
+        el("button", { class: "btn btn--solid", type: "button", onclick: (e) => { desc.classList.toggle("clamped"); e.currentTarget.lastChild.textContent = desc.classList.contains("clamped") ? t("view_details") : t("show_less"); } }, iconNode("right"), t("view_details")),
+        el("button", { class: "btn btn--ghost", type: "button", onclick: () => { feeTable.hidden = !feeTable.hidden; } }, iconNode("book"), t("fee_structure"))),
       qrGrid(data.qr)));
 }
 function openCourses(dept, courseId, level, showFees = false) {
@@ -487,9 +521,10 @@ const EVENT_ICON = { open_day: "users", fest: "star", ceremony: "trophy", admiss
 async function loadCalendar(year, month) {
   const data = await getJSON(`/api/calendar?year=${year}&month=${month}`);
   cal.loaded = true; cal.year = year; cal.month = month;
-  $("#cal-title").textContent = data.month_name;
+  $("#cal-title").textContent = new Date(year, month - 1, 1).toLocaleDateString(locale(), { month: "long", year: "numeric" });
   const iso = (d) => `${year}-${String(month).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-  const cells = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => el("span", { class: "dow" }, d));
+  const dow = new Intl.DateTimeFormat(locale(), { weekday: "short" });
+  const cells = [1, 2, 3, 4, 5, 6, 7].map((d) => el("span", { class: "dow" }, dow.format(new Date(2024, 0, d)))); // 1 Jan 2024 was a Monday
   for (let i = 0; i < data.first_weekday; i++) cells.push(el("span"));
   for (let d = 1; d <= data.days; d++) {
     const day = iso(d);
@@ -498,18 +533,18 @@ async function loadCalendar(year, month) {
     const hol = data.holidays.some((h) => h.date === day);
     const isToday = year === today.getFullYear() && month === today.getMonth() + 1 && d === today.getDate();
     const cls = ["cal-day", evs.length ? (multi ? "multi" : "event") : "", hol ? "holiday" : "", isToday ? "today" : ""].join(" ");
-    const label = [...evs.map((e) => e.name), ...data.holidays.filter((h) => h.date === day).map((h) => `Holiday: ${h.name}`)].join(", ");
+    const label = [...evs.map((e) => e.name), ...data.holidays.filter((h) => h.date === day).map((h) => t("holiday_prefix", { name: h.name }))].join(", ");
     cells.push(el("span", { class: cls, title: label || null, "aria-label": `${d}${label ? ": " + label : ""}` }, d));
   }
   $("#cal-grid").replaceChildren(...cells);
-  const fmt = (s) => new Date(s + "T00:00").toLocaleDateString("en-IN", { day: "numeric", month: "long" });
+  const fmt = (s) => new Date(s + "T00:00").toLocaleDateString(locale(), { day: "numeric", month: "long" });
   const items = [
     ...data.events.map((e) => ({ when: e.start === e.end ? fmt(e.start) : `${fmt(e.start)} – ${fmt(e.end)}`, name: e.name, kind: e.kind, sort: e.start })),
-    ...data.holidays.map((h) => ({ when: fmt(h.date), name: `Holiday: ${h.name}`, kind: "holiday", sort: h.date })),
+    ...data.holidays.map((h) => ({ when: fmt(h.date), name: t("holiday_prefix", { name: h.name }), kind: "holiday", sort: h.date })),
   ].sort((a, b) => a.sort.localeCompare(b.sort));
   $("#event-list").replaceChildren(...(items.length ? items.map((it) => el("li", { class: `event-item${it.kind === "holiday" ? " holiday" : ""}` },
     el("span", { class: "ic", html: icon(it.kind === "holiday" ? "flag" : EVENT_ICON[it.kind] || "calendar") }),
-    el("span", {}, el("b", {}, it.when), it.name))) : [el("li", { class: "empty" }, data.valid ? "Nothing on the calendar this month." : "The academic calendar doesn't cover this month yet.")]));
+    el("span", {}, el("b", {}, it.when), it.name))) : [el("li", { class: "empty" }, data.valid ? t("nothing_month") : t("calendar_missing"))]));
 }
 $("#cal-prev").addEventListener("click", () => { const m = cal.month === 1 ? 12 : cal.month - 1; loadCalendar(cal.month === 1 ? cal.year - 1 : cal.year, m); });
 $("#cal-next").addEventListener("click", () => { const m = cal.month === 12 ? 1 : cal.month + 1; loadCalendar(cal.month === 12 ? cal.year + 1 : cal.year, m); });
@@ -527,7 +562,7 @@ async function loadContacts() {
 
 // ---------------------------------------------------------------- banner, clock, boot
 function showNoiseHint() {
-  addKiosk("I only heard background noise. Tap the microphone and speak a little closer.", null);
+  addKiosk(t("noise_hint"), null);
   setState("idle");
 }
 function showBanner(seconds) {
@@ -536,25 +571,43 @@ function showBanner(seconds) {
   clearTimeout(showBanner.t);
   showBanner.t = setTimeout(() => { b.hidden = true; }, seconds * 1000);
 }
+function drawShortcuts() {
+  const tiles = [["pin", "tile_find", () => setView("navigate"), true], ["cap", "tile_courses", () => setView("courses")],
+    ["calendar", "tile_events", () => setView("events")], ["clock", "tile_timings", () => ask("What are the office timings?", t("tile_timings"))],
+    ["phone", "tile_contacts", () => setView("contacts")], ["users", "tile_person", () => ask("I want to talk to a person", t("tile_person"))]];
+  $("#tiles").replaceChildren(...tiles.map(([i, key, fn, primary]) => el("button", { class: `tile${primary ? " tile--primary" : ""}`, type: "button", onclick: fn }, iconNode(i), t(key))));
+  const quick = [["pin", "quick_dir", "navigate"], ["cap", "quick_prog", "courses"], ["calendar", "quick_cal", "events"], ["phone", "quick_contacts", "contacts"]];
+  $("#quick").replaceChildren(...quick.map(([i, key, view]) => el("button", { class: "qa", type: "button", onclick: () => setView(view) }, iconNode(i), el("span", {}, t(key)), iconNode("right"))));
+}
+// Redraw everything on screen in the newly chosen language (the chat history stays as it was).
+function relabel() {
+  drawShortcuts();
+  setState(body.dataset.state);
+  const hint = $(".mic-hint");
+  if (hint) hint.textContent = t(body.dataset.mic === "on" ? "mic_hint_on" : "mic_hint_off");
+  if (departments && $("#dept-select").options.length) fillDepartments($("#dept-select"));
+  if (courses.loaded && departments) { drawCourses(); if (courses.selected) selectCourse(courses.selected, courses.showFees); }
+  if (cal.loaded) loadCalendar(cal.year, cal.month);
+  if (body.dataset.view === "navigate") { if (route) renderRoute(route); else showPlaceBrowser(); }
+  tick();
+}
+const tick = () => { $("#clock").textContent = new Date().toLocaleTimeString(locale(), { hour: "2-digit", minute: "2-digit" }); };
 function boot() {
   hydrateIcons();
-  const tiles = [["pin", "Find a Place", () => setView("navigate"), true], ["cap", "Courses", () => setView("courses")],
-    ["calendar", "Events", () => setView("events")], ["clock", "Timings", () => ask("What are the office timings?")],
-    ["phone", "Contacts", () => setView("contacts")], ["users", "Talk to a Person", () => ask("I want to talk to a person")]];
-  $("#tiles").replaceChildren(...tiles.map(([i, label, fn, primary]) => el("button", { class: `tile${primary ? " tile--primary" : ""}`, type: "button", onclick: fn }, iconNode(i), label)));
-  const quick = [["pin", "Get Directions", "navigate"], ["cap", "Programmes & Fees", "courses"], ["calendar", "Academic Calendar", "events"], ["phone", "Important Contacts", "contacts"]];
-  $("#quick").replaceChildren(...quick.map(([i, label, view]) => el("button", { class: "qa", type: "button", onclick: () => setView(view) }, iconNode(i), el("span", {}, label), iconNode("right"))));
+  applyStatic();
+  drawShortcuts();
+  for (const b of $$("button[data-lang]")) b.addEventListener("click", () => chooseLanguage(b.dataset.lang));
+  window.addEventListener("kiosk:lang", relabel);
   for (const b of $$(".nav-item")) b.addEventListener("click", () => setView(b.dataset.go));
   $("#ask-input").addEventListener("input", () => { if (body.dataset.speaking === "yes") stopSpeaking(); });
   $("#ask").addEventListener("submit", (e) => { e.preventDefault(); const i = $("#ask-input"); ask(i.value); i.value = ""; });
   $("#new-visitor").addEventListener("click", () => resetVisitor(true));
   window.addEventListener("kiosk:mic", (e) => {
     const hint = $(".mic-hint");
-    if (hint) hint.textContent = e.detail.on ? "Listening. Tap the microphone again to stop." : "Tap the microphone to talk";
+    if (hint) hint.textContent = t(e.detail.on ? "mic_hint_on" : "mic_hint_off");
     if (e.detail.on) { setState("listening"); if (body.dataset.view === "welcome") setView("chat"); }
     else if (body.dataset.state === "listening") setState("idle");
   });
-  const tick = () => { $("#clock").textContent = new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }); };
   tick(); setInterval(tick, 15_000);
   connect();
 }
