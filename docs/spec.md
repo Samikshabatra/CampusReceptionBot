@@ -358,6 +358,7 @@ reception-robot/
 6. **Analytics + admin** — logging, dashboard, KB reload.
 7. **Evaluation** — datasets, harness, MLflow, README results table, report.
 8. **Stretch** — sign/room-number OCR, barge-in, reception notification, more languages.
+9. **Hindi and Kannada (added 2026-11-16)** — language picker on the welcome screen and top bar; offline NLLB-200 translation in and out with a number guard; Whisper `small` in the chosen language; Microsoft neural voices for Hindi/Kannada answers with browser-voice fallback; tap-to-interrupt; Silero noise gate. *Done when*: a visitor who picks हिन्दी or ಕನ್ನಡ gets the greeting, answers, route steps and screen text in that language, with every number unchanged.
 
 ## 14. Left to the builder
 Exact libraries and model sizes within the stated families; UI visual design; SVG drawing style; corridor waypoint placement; threshold values (tuned on validation data, stored in config); prompt wording; dashboard chart choices.
@@ -367,7 +368,7 @@ Exact libraries and model sizes within the stated families; UI visual design; SV
 **Most important**
 1. **Rooms 801–807 and 811 are not on the map** — and the brief's own demo question is "Where is Room 806?". If those rooms exist, we need their positions; otherwise the kiosk will (correctly) say it can't find 806.
 2. Hardware: laptop + USB webcam + mic + speaker + monitor; runs offline on CPU.
-3. English only.
+3. English, Hindi and Kannada (the visitor chooses; English by default). Hindi/Kannada voices need internet; everything else runs offline.
 4. Kiosk facing direction will be measured at install; until then directions use landmarks.
 
 **Data**
