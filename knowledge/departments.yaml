@@ -1,0 +1,23 @@
+# Department (as named in the course data) -> place id / group in Central Block,
+# or not_in_central_block. Edit when a department moves.
+Department of Computer Science: dept_computer_science
+Department of Psychology: dept_psychological_sciences
+Department of Social Work: dept_social_work
+School of Law: law
+Department of Media Studies: media_studies
+Department of Business and Management: school_business_management
+Department of Life Sciences: not_in_central_block
+Department of Professional Studies: not_in_central_block
+Department of Statistics and Data Science: not_in_central_block
+Department of International Studies, Political Science and History: not_in_central_block
+Department of Performing Arts, Theatre and Music: not_in_central_block
+Department of Commerce: not_in_central_block
+School of Education: not_in_central_block
+Department of Economics: not_in_central_block
+Department of Physics and Electronics: not_in_central_block
+Department of English and Cultural Studies: not_in_central_block
+Department of Chemistry: not_in_central_block
+Department of Mathematics: not_in_central_block
+Department of Philosophy and Theology: not_in_central_block
+Department of Sociology: not_in_central_block
+Department of Hotel Management: not_in_central_block
