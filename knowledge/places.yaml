@@ -1,0 +1,299 @@
+# Named places in Central Block (from the official floor map).
+# Updated to the FINAL map (2026-11-04). Rooms, washrooms and water dispensers are
+# generated from floors/*.yaml;
+# list a room here only to give it a special name.
+# hours_group: offices | library | services (services = hours not confirmed).
+
+# ---------- Basement ----------
+- id: health_centre
+  name: Health Centre
+  aliases: [health centre, health center, clinic, first aid, doctor, medical, nurse, sick room, infirmary]
+  category: facility
+  floor: B
+  hours_group: services
+- id: lost_and_found
+  name: Lost & Found
+  spoken_name: Lost and Found
+  aliases: [lost and found, lost property, lost item, lost my, found item]
+  category: facility
+  floor: B
+  hours_group: services
+- id: gourmet
+  name: Gourmet (Cafeteria)
+  spoken_name: Gourmet cafeteria
+  aliases: [gourmet, gourment, cafeteria, canteen, food court, lunch, mess, eat]
+  category: cafe
+  floor: B
+  hours_group: services
+- id: stationery_shop
+  name: Stationery Shop
+  aliases: [stationery, stationary, stationery shop, pens, notebook, notebooks]
+  category: shop
+  floor: B
+  hours_group: services
+- id: xerox_shop
+  name: Xerox / Print Shop
+  spoken_name: Xerox and Print Shop
+  aliases: [xerox, zerox, photocopy, photo copy, print shop, printout, print out, printing, xerox shop, print, print documents]
+  category: shop
+  floor: B
+  hours_group: services
+
+# ---------- Ground floor ----------
+- id: admissions_office
+  name: Office of Admissions
+  aliases: [admissions office, admission office, office of admissions, admission section, admissions section]
+  category: office
+  floor: G
+  group: admissions
+  hours_group: offices
+- id: office_processing_im
+  name: Office of Processing & Information Management
+  spoken_name: Office of Processing and Information Management
+  aliases: [processing office, information management, office of processing, certificates office, documents office, submit documents, certificate, transcript]
+  category: office
+  floor: G
+  hours_group: offices
+- id: office_procurement
+  name: Office of Procurement
+  aliases: [procurement, procurement office, purchase office, purchase department]
+  category: office
+  floor: G
+  hours_group: offices
+- id: conference_room
+  name: Conference Room
+  aliases: [conference room, conference hall, meeting room]
+  category: facility
+  floor: G
+- id: accounts_office
+  name: Accounts Office
+  group: accounts
+  aliases: [accounts, accounts office, accounts section, fee counter, fee payment, pay fees, finance office]
+  category: office
+  floor: G
+  hours_group: offices
+- id: faculty_management_office
+  name: Faculty Management Office
+  group: faculty_management
+  aliases: [faculty management, faculty management office, hr office, human resources]
+  category: office
+  floor: G
+  hours_group: offices
+- id: council_room
+  name: Council Room
+  aliases: [council room, council hall]
+  category: facility
+  floor: G
+- id: reception
+  name: Reception
+  aliases: [reception, front desk, help desk, helpdesk, information desk, enquiry, enquiry desk, inquiry]
+  category: reception
+  floor: G
+  hours_group: offices
+- id: entrance
+  name: Main Entrance
+  aliases: [entrance, exit, way out, main gate, main door, main entrance, ground floor exit]
+  category: entrance
+  floor: G
+
+# ---------- 1st floor ----------
+- id: room_106
+  name: Research & Development Cell (Room 106)
+  spoken_name: Research and Development Cell
+  aliases: [research and development cell, research and development, r and d cell, rnd cell, research cell]
+  category: office
+  floor: "1"
+  room_number: "106"
+  hours_group: offices
+- id: room_110
+  name: Office of Admissions (Room 110)
+  spoken_name: Office of Admissions in Room 110
+  category: office
+  floor: "1"
+  room_number: "110"
+  group: admissions
+  primary: false
+  hours_group: offices
+
+- id: office_accounts_exams
+  name: Office of Accounts and Exams
+  aliases: [office of accounts and exams, exam office, exams office, exam section, examination office, exam cell, coe office, hall ticket, results office]
+  category: office
+  floor: "1"
+  group: accounts
+  primary: false
+  hours_group: offices
+- id: documentation_room
+  name: Documentation Room
+  aliases: [documentation room, documentation, document room, records room]
+  category: office
+  floor: "1"
+  hours_group: offices
+- id: office_faculty_management
+  name: Office of Faculty Management
+  category: office
+  floor: "1"
+  group: faculty_management
+  primary: false
+  hours_group: offices
+
+# ---------- 2nd & 3rd floor ----------
+- id: sbm_2
+  name: School of Business and Management (MBA), 2nd floor
+  spoken_name: School of Business and Management
+  aliases: [mba, mba department, school of business and management, business school, business and management, management department]
+  category: department
+  floor: "2"
+  whole_floor: true
+  group: school_business_management
+  department: Department of Business and Management
+- id: sbm_3
+  name: School of Business and Management (MBA), 3rd floor
+  spoken_name: School of Business and Management, 3rd floor
+  category: department
+  floor: "3"
+  whole_floor: true
+  group: school_business_management
+  primary: false
+  department: Department of Business and Management
+- id: faculty_rooms_2
+  name: Faculty Rooms (2nd floor)
+  aliases: [mba faculty rooms, mba faculty]
+  category: office
+  floor: "2"
+- id: faculty_rooms_3
+  name: Faculty Rooms (3rd floor)
+  category: office
+  floor: "3"
+
+# ---------- 4th & 5th floor: School of Law ----------
+- id: sol_4
+  name: School of Law, 4th floor
+  spoken_name: School of Law
+  aliases: [law, law department, department of law, school of law, law school, llb, llm, dept of law]
+  category: department
+  floor: "4"
+  whole_floor: true
+  group: law
+  department: School of Law
+- id: sol_5
+  name: School of Law, 5th floor
+  spoken_name: School of Law, 5th floor
+  category: department
+  floor: "5"
+  whole_floor: true
+  group: law
+  primary: false
+  department: School of Law
+- id: placement_office_law
+  name: Placement Office (Law)
+  spoken_name: Law Placement Office
+  aliases: [placement office, placement office law, law placement, placement cell, placements]
+  category: office
+  floor: "5"
+  hours_group: offices
+- id: director_of_law
+  name: Director of Law
+  spoken_name: office of the Director of Law
+  aliases: [director of law, law director, director office law]
+  category: office
+  floor: "5"
+  hours_group: offices
+- id: faculty_cabin_4
+  name: Faculty Cabin (4th floor, School of Law)
+  category: office
+  floor: "4"
+- id: f_cabin_5
+  name: Faculty Cabin (F. Cabin, 5th floor centre)
+  spoken_name: centre Faculty Cabin on the 5th floor
+  category: office
+  floor: "5"
+
+# ---------- 6th floor ----------
+- id: library
+  name: Library
+  aliases: [library, libary, librery, books, reading room, borrow books, central library]
+  category: library
+  floor: "6"
+  hours_group: library
+- id: dept_social_work
+  name: Department of Social Work
+  aliases: [social work, social work department, department of social work, msw]
+  category: department
+  floor: "6"
+  hours_group: offices
+  department: Department of Social Work
+
+# ---------- 7th floor ----------
+- id: dept_psychological_sciences
+  name: Department of Psychological Sciences
+  aliases: [psychology, psychology department, psychological sciences, department of psychology, psych department]
+  category: department
+  floor: "7"
+  hours_group: offices
+  department: Department of Psychology
+- id: faculty_cabin_7
+  name: Faculty Cabin (7th floor)
+  category: office
+  floor: "7"
+
+# ---------- 8th floor (kiosk) ----------
+- id: dept_computer_science
+  name: Department of Computer Science
+  aliases: [computer science, computer science department, cs department, cs dept, department of computer science, mca department]
+  category: department
+  floor: "8"
+  whole_floor: true
+  department: Department of Computer Science
+- id: faculty_staff_room
+  name: Faculty Staff Room
+  aliases: [faculty staff room, faculty lounge, staff room, faculty room, cs faculty room, staffroom]
+  category: office
+  floor: "8"
+- id: ccd
+  name: CCD
+  spoken_name: CCD cafe
+  aliases: [ccd, cafe coffee day, coffee, cafe, coffee shop, snacks, tea]
+  category: cafe
+  floor: "8"
+  hours_group: services
+- id: mca_lab
+  name: MCA Lab
+  aliases: [mca lab, computer lab, computer laboratory, mca laboratory]
+  category: lab
+  floor: "8"
+
+# ---------- 9th floor: General classrooms ----------
+# The map still draws a "Dept. of Law" box here; the team confirmed Law is on the 4th floor.
+- id: law_box_9
+  name: Dept. of Law box (9th floor, not in use)
+  category: unknown
+  floor: "9"
+  primary: false
+
+# ---------- 10th floor ----------
+- id: room_1000
+  name: Department of Media Studies (Room 1000)
+  spoken_name: Department of Media Studies in Room 1000
+  aliases: [media studies, media studies department, department of media studies, media department]
+  category: department
+  floor: "10"
+  room_number: "1000"
+  group: media_studies
+  hours_group: offices
+  department: Department of Media Studies
+- id: experiential_media_lab
+  name: Experiential Learning Media Lab
+  aliases: [experiential learning media lab, experiential learning lab, media lab]
+  category: lab
+  floor: "10"
+- id: sky_view_studio
+  name: Sky View Studio
+  aliases: [sky view studio, skyview studio, sky view]
+  category: studio
+  floor: "10"
+- id: green_view_studio
+  name: Green View Studio
+  aliases: [green view studio, greenview studio, green view]
+  category: studio
+  floor: "10"
