@@ -38,9 +38,18 @@ class VisionConfig(BaseModel):
 class SpeechConfig(BaseModel):
     """Speech-to-text and the browser's voice activity detection."""
 
-    model: str = "small"  # multilingual: English, Hindi and Kannada
+    model: str = "base.en"  # English
+    # Hindi and Kannada use Whisper models fine-tuned on each language (CTranslate2 folders);
+    # a language whose folder is missing falls back to the multilingual model.
+    language_models: dict[str, str] = {
+        "hi": "models/whisper-hindi-small-ct2",
+        "kn": "models/whisper-kannada-ct2",
+    }
+    fallback_model: str = "small"
     compute_type: str = "int8"
     beam_size: int = 1
+    lead_in_s: float = 0.3  # silence added before speech so the first syllable is not lost
+    max_new_tokens: int = 128  # questions are short; stops runaway decoding
     vad_rms_threshold: float = 0.015
     voice_threshold: float = 0.5
     min_voice_s: float = 0.3
@@ -55,8 +64,8 @@ class SpeechConfig(BaseModel):
     )
     # Short native-script hints keep Whisper writing Hindi/Kannada in their own scripts.
     native_hints: dict[str, str] = {
-        "hi": "पुस्तकालय, कमरा, फीस, प्रवेश, कार्यालय, समय",
-        "kn": "ಗ್ರಂಥಾಲಯ, ಕೊಠಡಿ, ಶುಲ್ಕ, ಪ್ರವೇಶ, ಕಚೇರಿ, ಸಮಯ",
+        "hi": "पुस्तकालय, कमरा, फीस, प्रवेश, कार्यालय, समय, ज़ेरॉक्स, एमसीए, बीसीए",
+        "kn": "ಗ್ರಂಥಾಲಯ, ಕೊಠಡಿ, ಶುಲ್ಕ, ಪ್ರವೇಶ, ಕಚೇರಿ, ಸಮಯ, ಜೆರಾಕ್ಸ್, ಎಂಸಿಎ, ಬಿಸಿಎ",
     }
 
 

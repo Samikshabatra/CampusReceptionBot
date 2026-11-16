@@ -35,7 +35,13 @@ vision:                 # face boxes are fractions of the camera frame
   haar_min_neighbors: 5
   frame_interval_ms: 200
 speech:
-  model: small          # multilingual faster-whisper (English, Hindi, Kannada)
+  model: base.en        # English; small.en is more accurate but slower
+  language_models:      # Whisper fine-tuned per language (see README for downloads)
+    hi: models/whisper-hindi-small-ct2
+    kn: models/whisper-kannada-ct2
+  fallback_model: small # multilingual, used when a language model above is missing
+  lead_in_s: 0.3
+  max_new_tokens: 128
   compute_type: int8
   beam_size: 1
   vad_rms_threshold: 0.015
