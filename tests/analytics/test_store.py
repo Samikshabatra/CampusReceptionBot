@@ -80,6 +80,7 @@ def store(tmp_path: Path) -> AnalyticsStore:
         resp("repeat", "clarify"),
         {"answer_ms": 10},
         None,
+        "hi",
     )
     return s
 
@@ -99,6 +100,23 @@ def test_summary(store: AnalyticsStore) -> None:
     assert s["latency_ms"]["avg"] == pytest.approx((500 + 50 + 30 + 120 + 10) / 5)
     assert s["avg_session_s"] == pytest.approx(60.0)
     assert s["by_hour"]["10"] == 3 and s["by_mode"]["voice"] == 1
+    assert s["by_language"] == {"en": 4, "hi": 1}
+
+
+def test_old_database_gains_language_column(tmp_path: Path) -> None:
+    import sqlite3
+
+    old = sqlite3.connect(tmp_path / "old.db")
+    old.executescript(
+        "CREATE TABLE turns(id INTEGER PRIMARY KEY AUTOINCREMENT, session_id TEXT, ts TEXT,"
+        " mode TEXT, text_masked TEXT, intent TEXT, confidence REAL, card_kind TEXT,"
+        " targets_json TEXT, sources_json TEXT, verified INTEGER, handover_reason TEXT,"
+        " latency_json TEXT, total_ms REAL, stt_logprob REAL);"
+    )
+    old.close()
+    s = AnalyticsStore(tmp_path / "old.db")
+    s.log_turn("s9", T0, "typed", "hello", resp("greeting"), {"answer_ms": 5}, None, "kn")
+    assert s.summary(T0 - timedelta(days=1))["by_language"] == {"kn": 1}
 
 
 def test_export_csv(store: AnalyticsStore) -> None:

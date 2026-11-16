@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS turns(
   id INTEGER PRIMARY KEY AUTOINCREMENT, session_id TEXT, ts TEXT, mode TEXT,
   text_masked TEXT, intent TEXT, confidence REAL, card_kind TEXT, targets_json TEXT,
   sources_json TEXT, verified INTEGER, handover_reason TEXT, latency_json TEXT,
-  total_ms REAL, stt_logprob REAL);
+  total_ms REAL, stt_logprob REAL, lang TEXT DEFAULT 'en');
 CREATE INDEX IF NOT EXISTS turns_ts ON turns(ts);
 """
 
@@ -46,6 +46,9 @@ class AnalyticsStore:
         Path(path).parent.mkdir(parents=True, exist_ok=True)
         self.db = sqlite3.connect(str(path), check_same_thread=False)
         self.db.executescript(_SCHEMA)
+        cols = {row[1] for row in self.db.execute("PRAGMA table_info(turns)")}
+        if "lang" not in cols:  # databases created before Hindi/Kannada support
+            self.db.execute("ALTER TABLE turns ADD COLUMN lang TEXT DEFAULT 'en'")
         self.lock = threading.Lock()
 
     def start_session(self, session_id: str, at: datetime, started_by: str) -> None:
@@ -73,19 +76,20 @@ class AnalyticsStore:
         r: Response,
         latency_ms: dict[str, float],
         stt_logprob: float | None,
+        lang: str = "en",
     ) -> None:
-        """Record one question/answer (text is masked first)."""
+        """Record one question/answer (text is masked first; Hindi/Kannada stored in English)."""
         targets = r.card.data.get("targets") if r.card.kind == "map" else None
         with self.lock, self.db:
             self.db.execute(
                 "INSERT INTO turns(session_id, ts, mode, text_masked, intent, confidence, "
                 "card_kind, targets_json, sources_json, verified, handover_reason, "
-                "latency_json, total_ms, stt_logprob) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                "latency_json, total_ms, stt_logprob, lang) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 (
                     session_id, at.isoformat(), mode, mask_pii(text.strip())[:500], r.intent,
                     r.confidence, r.card.kind, json.dumps(targets), json.dumps(r.sources),
                     int(r.verified), r.handover_reason, json.dumps(latency_ms),
-                    float(sum(latency_ms.values())), stt_logprob,
+                    float(sum(latency_ms.values())), stt_logprob, lang,
                 ),
             )  # fmt: skip
 
@@ -157,12 +161,13 @@ class AnalyticsStore:
             "avg_session_s": float(np.mean(durations)) if durations else 0.0,
             "by_hour": dict(Counter(str(datetime.fromisoformat(r["ts"]).hour) for r in rows)),
             "by_mode": dict(Counter(r["mode"] for r in rows)),
+            "by_language": dict(Counter(r["lang"] or "en" for r in rows)),
         }
 
     def export_csv(self) -> str:
         """All turns as CSV (already anonymised)."""
         cols = ["session_id", "ts", "mode", "text_masked", "intent", "confidence", "card_kind",
-                "handover_reason", "verified", "total_ms"]  # fmt: skip
+                "handover_reason", "verified", "total_ms", "lang"]  # fmt: skip
         buf = io.StringIO()
         w = csv.writer(buf)
         w.writerow(cols)

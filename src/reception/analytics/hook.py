@@ -25,7 +25,7 @@ class AnalyticsHook:
                 stt = kw.get("stt")
                 self.store.log_turn(
                     kw["session_id"], now, kw["mode"], kw["text"], kw["response"],
-                    kw["latency"], stt.avg_logprob if stt else None,
+                    kw["latency"], stt.avg_logprob if stt else None, kw.get("lang", "en"),
                 )  # fmt: skip
             elif event == "session_end":
                 self.store.end_session(kw["session_id"], now, kw["ended_by"])
