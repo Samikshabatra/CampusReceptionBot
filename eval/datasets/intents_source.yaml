@@ -1,0 +1,592 @@
+# Hand-written visitor utterances per intent (source for intents.csv).
+# scripts/train_intent.py --assign-splits writes intents.csv with a fixed seeded split.
+navigate:
+  - where is room 806
+  - where is the xerox shop
+  - zerox shop where
+  - how do i get to the library
+  - directions to the accounts office
+  - where can i find the mca lab
+  - take me to the canteen
+  - where is the washroom
+  - i need to go to room 812
+  - which floor is the law department on
+  - how to reach health centre
+  - where is reception
+  - can you show me the way to the admissions office
+  - wheres the nearest toilet
+  - where is ccd
+  - i am looking for the department of psychology
+  - where is the faculty staff room
+  - how do i go to sky view studio
+  - location of stationery shop
+  - where is the lift
+  - show me the route to the conference room
+  - where is the exit
+  - where can i get a printout
+  - which floor is room 1004
+  - where is the computer science department
+  - where is the hod office
+  - where do i submit my documents
+  - how to go to lost and found
+  - where is the media studies department
+  - guide me to the council room
+  - where is social work department
+  - where can i drink water
+  - were is the library
+  - how do i get to the basement
+  - directions to room 215 please
+  - where is the mba department
+  - navigate to green view studio
+  - where is the commerce department
+  - how do i reach the 9th floor
+  - way to the restroom
+facility_hours:
+  - library timings
+  - what time does the library close
+  - is the library open now
+  - when does the accounts office open
+  - what are the office timings
+  - is the xerox shop open
+  - when does ccd close
+  - office hours please
+  - what time does reception open
+  - is the admissions office open today
+  - is the canteen open now
+  - what are the library hours on sunday
+  - until what time is the library open
+  - health centre timings
+  - is the stationery shop open on saturday
+  - when will the office open tomorrow
+  - is accounts open during lunch
+  - what time is lunch break for the office
+  - are offices open on third saturday
+  - library working hours
+  - till when is the gourmet open
+  - when does the admission office close
+  - what time does the processing office open
+  - timings of the reception
+  - opening hours of lost and found
+  - is the library open on public holidays
+  - what time does the library open tomorrow
+  - xerox shop timing
+  - is the office closed now
+  - library open till what time
+  - can i visit the accounts office at 4 pm
+  - is the library open during vacation
+  - timing for ccd
+  - what are its timings
+  - when does it open
+college_open:
+  - is the college open today
+  - is college open tomorrow
+  - is the university working today
+  - is today a holiday
+  - is campus open on sunday
+  - is the college closed today
+  - is tomorrow a working day
+  - are you open today
+  - is christ open on saturday
+  - is today a working day
+  - is the college open on third saturday
+  - is it a holiday tomorrow
+  - is the campus closed today
+  - college working today or not
+  - is college open on deepavali
+  - is the institution open now
+  - can i come to college today
+  - is college functioning today
+  - is it a working saturday
+  - is the university closed tomorrow
+  - is college open this saturday
+  - is campus working on sunday
+  - are colleges closed today
+  - is the college open on republic day
+  - is there college today
+  - is the block open today
+  - is the university open this weekend
+  - is today off
+  - is christ university open today
+  - is college open during christmas vacation
+  - is it holiday today
+course_info:
+  - tell me about mca
+  - what is the msc ai and ml programme about
+  - what is bca
+  - details about bsc computer science and mathematics
+  - how long is the mca course
+  - what is the duration of bca
+  - tell me about the msc computer science
+  - what will i learn in mca
+  - is mca a two year course
+  - how many semesters in bca
+  - information about phd in computer science
+  - what is the msc data science course
+  - describe the ma psychology programme
+  - tell me about llb
+  - what is ba journalism about
+  - how long is the mba
+  - duration of msc ai ml
+  - what is the syllabus of bca
+  - tell me about bba
+  - course details for bcom
+  - what is the one year msc ai ml
+  - about the phd ai programme
+  - is bsc psychology a three year course
+  - tell me about the forensic science course
+  - what is ma media and communication studies
+  - tell me more about this course
+  - how many years is ba llb
+  - what does the mca program cover
+  - is there an msc in data science
+  - information on the master of computer applications
+  - explain the bsc computer science statistics course
+  - tell me about the honours programme
+course_fees:
+  - what is the fee for mca
+  - mca fees
+  - how much is the bca fee
+  - fee structure for msc ai and ml
+  - what are the fees for nri students for mca
+  - how much does the mba cost
+  - second year fees for bca
+  - fees for karnataka students for bsc
+  - what is the fee for other state students
+  - how much is the phd fee
+  - mca fees for oci
+  - fee for international students
+  - what is the total fee for bca
+  - how much do i have to pay for msc computer science
+  - fees for foreign nationals
+  - what is the registration fee
+  - how much is the admission fee
+  - cost of the ba llb course
+  - fees for msc data science
+  - what is the semester fee
+  - first year fee for mca
+  - what is the fee for saarc students
+  - how much does bcom cost
+  - annual fees for the mba program
+  - tell me the fees
+  - what are the charges for msc ai ml
+  - is the fee different for other states
+  - fees for the one year msc
+  - when is the fee payment deadline
+  - what is the fee for third year
+  - how much is the course
+  - fees of the bca honours
+  - and for nri
+  - what about for oci students
+course_list:
+  - what courses do you offer
+  - which courses are available in computer science
+  - list of pg courses
+  - what ug courses are there
+  - courses offered by the psychology department
+  - what programmes does the law school offer
+  - show me all the courses
+  - what phd programmes are available
+  - which masters programs do you have
+  - courses in commerce
+  - what are the courses in media studies
+  - list all computer science courses
+  - what undergraduate programmes does christ offer
+  - which courses can i do after 12th
+  - programmes in social work
+  - which courses are there in the business school
+  - what are the options for postgraduate study
+  - do you have any data science courses
+  - what can i study here
+  - list of courses in economics
+  - courses offered in life sciences
+  - which degrees are available
+  - what are the mba specialisations
+  - list of doctoral programmes
+  - show courses for computer science department
+  - what courses does the commerce department have
+  - pg programmes in psychology
+  - which bachelors courses are there
+  - course list please
+  - what are the available programs
+  - which courses are offered in english department
+admissions:
+  - how do i apply for admission
+  - admission process
+  - when are the admission interviews
+  - how can i get admission in mca
+  - what is the admission procedure
+  - how to apply for bca
+  - when does admission start
+  - what documents are needed for admission
+  - is admission open now
+  - how do i register for admission
+  - admission interview dates
+  - what is the selection process
+  - eligibility for mca admission
+  - where do i apply online
+  - can i apply for the msc now
+  - when is the last date to apply
+  - how to get into christ university
+  - i want to take admission
+  - admission enquiry
+  - how to join the mba program
+  - what is the entrance process
+  - admission details please
+  - are admissions closed
+  - when is the next interview session
+  - whom do i contact for admission
+  - how do i apply for phd
+  - admission for international students
+  - what is the application process
+  - can my son get admission here
+  - i want to apply for bcom
+  - details about admissions 2027
+contact:
+  - what is the reception phone number
+  - give me the contact number
+  - admissions phone number
+  - what is the email id of the college
+  - how can i contact the university
+  - phone number of christ university
+  - i need the admissions email
+  - how do i contact the admissions office
+  - customer support number
+  - contact details please
+  - what is the helpline number
+  - can i get the college email address
+  - whom should i call
+  - number for general enquiries
+  - give me the admission office contact
+  - how do i reach the university by phone
+  - email for admissions
+  - contact information
+  - what is the support number
+  - can i have the phone number of reception
+  - how do i email the college
+  - mobile number for admission
+  - landline number of christ
+  - send me the contact details
+  - where can i call for help
+  - general email id
+  - what is the enquiry number
+  - how do i get in touch with admissions
+  - office phone number
+  - contact for fee queries
+  - what number should i call
+faculty:
+  - where is professor sharma
+  - i want to meet my professor
+  - where can i find dr kumar
+  - where do faculty members sit
+  - where is the faculty cabin
+  - how do i meet a teacher
+  - i want to meet the class teacher
+  - where is professor rao cabin
+  - can you find my teacher
+  - where do computer science teachers sit
+  - how do i contact a faculty member
+  - i am looking for a lecturer
+  - where is my guide
+  - where is the cabin of dr joseph
+  - which floor is professor menon on
+  - i want to meet the hod of computer science
+  - where can i meet the faculty
+  - where is mam cabin
+  - how do i find sir
+  - can you tell me where the professors are
+  - staff room of computer science
+  - where do law faculty sit
+  - faculty details
+  - where is the teachers room
+  - i need to meet the mca coordinator
+  - where is the professor of psychology
+  - locate faculty member
+  - i have an appointment with a professor
+  - how can i find staff details
+  - where is dr thomas sitting
+  - who teaches mca
+events:
+  - when is the open day
+  - what events are coming up
+  - any upcoming holidays
+  - when is the next holiday
+  - what is happening this month
+  - when is convocation
+  - when are the exams
+  - is there any fest
+  - when is daksh
+  - events this week
+  - when is the christmas vacation
+  - when does summer vacation start
+  - upcoming events at central campus
+  - when is founders day
+  - list of holidays
+  - when is magnificat
+  - any cultural fest coming up
+  - when is the athletic meet
+  - when do classes reopen
+  - what holidays are there in november
+  - when is the end semester exam
+  - any events tomorrow
+  - when is the theatre festival
+  - when is nritta
+  - is there any event on saturday
+  - when is the graduation ceremony
+  - what is the academic calendar
+  - when is gratitude day
+  - next public holiday
+  - when is the sports fest
+  - whats happening on campus
+library:
+  - library website
+  - can i borrow books
+  - how do i access the library online
+  - is there a library here
+  - library membership
+  - can visitors use the library
+  - how to search for books
+  - library catalogue
+  - where can i read books
+  - library rules
+  - online library portal
+  - can i get a library card
+  - e resources of the library
+  - how many books can i borrow
+  - does the library have journals
+  - can outsiders use the library
+  - library link please
+  - i want to return a book
+  - how do i renew a book
+  - library facilities
+  - digital library access
+  - library contact
+  - is there a reading room
+  - can i sit in the library
+  - how to find a book in the library
+  - library website link
+  - does the library have wifi
+  - can i photocopy in the library
+  - library services
+  - open the library website
+human:
+  - i want to talk to a person
+  - can i speak to someone
+  - connect me to reception
+  - i need a human
+  - let me talk to a staff member
+  - i want to speak to the receptionist
+  - can someone help me
+  - call a person please
+  - i need to talk to an officer
+  - this is not helping get me a human
+  - can i talk to the front desk
+  - i would like to speak with someone in charge
+  - please call the staff
+  - i need personal assistance
+  - talk to a real person
+  - can you connect me to the admissions team
+  - i want to complain
+  - can i meet someone from administration
+  - get me someone
+  - i need help from a staff
+  - transfer me to a person
+  - i prefer to talk to a human
+  - is there anyone i can speak to
+  - can a staff member come here
+  - help desk person please
+  - i need to speak with the manager
+  - please get me a real person
+  - can i talk to someone about my problem
+  - human please
+  - speak to a person
+urgent:
+  - i feel dizzy
+  - i am not feeling well
+  - someone fainted
+  - i need a doctor
+  - emergency
+  - i lost my child
+  - there is a fire
+  - i am hurt
+  - my friend is sick
+  - call an ambulance
+  - i feel sick
+  - help me i am injured
+  - someone is bleeding
+  - i am having chest pain
+  - there is an accident
+  - i feel like vomiting
+  - my child is missing
+  - i need first aid urgently
+  - someone collapsed
+  - it is an emergency
+  - i have a headache and fever
+  - i am feeling unwell
+  - someone is harassing me
+  - i need medical help
+  - my kid is lost
+  - i cant breathe properly
+  - he fell down the stairs
+  - i need help urgently
+  - there is a medical emergency
+  - i got hurt
+  - please help someone is unconscious
+greeting:
+  - hi
+  - hello
+  - good morning
+  - hey
+  - hello there
+  - good afternoon
+  - good evening
+  - hi robot
+  - namaste
+  - hey there
+  - hello assistant
+  - hi how are you
+  - greetings
+  - yo
+  - hai
+  - hello good morning
+  - hi there
+  - good morning sir
+  - hello can you help me
+  - hey robot
+  - hi i need some help
+  - hello hello
+  - morning
+  - hello madam
+  - hi buddy
+  - hi christ assistant
+  - hello i have a question
+  - hey are you there
+  - hii
+  - hi good afternoon
+  - hello is anyone there
+thanks_bye:
+  - thank you
+  - thanks
+  - bye
+  - goodbye
+  - thanks a lot
+  - thank you so much
+  - thats all
+  - ok bye
+  - see you
+  - thanks for your help
+  - that is helpful thank you
+  - bye bye
+  - great thanks
+  - ok thank you
+  - thank u
+  - nothing else
+  - thats it
+  - i am done
+  - have a nice day
+  - thanks bye
+  - cool thanks
+  - okay got it thanks
+  - see you later
+  - thanks robot
+  - much appreciated
+  - you have been very helpful
+  - no more questions
+  - alright thank you
+  - done thanks
+  - cheers
+  - ok thats all for now
+repeat:
+  - say that again
+  - repeat please
+  - can you repeat
+  - what did you say
+  - pardon
+  - sorry i didnt hear
+  - come again
+  - please repeat that
+  - one more time
+  - i didnt catch that
+  - repeat the directions
+  - can you say it again slowly
+  - what
+  - sorry
+  - could you repeat the last answer
+  - say again
+  - repeat the answer
+  - i missed that
+  - huh
+  - what was that
+  - again please
+  - repeat the fees
+  - please say that once more
+  - excuse me
+  - can you speak again
+  - tell me again
+  - what did you just say
+  - i couldnt hear you
+  - louder please
+  - repeat it
+smalltalk:
+  - how are you
+  - what is your name
+  - who are you
+  - what can you do
+  - are you a robot
+  - who made you
+  - are you human
+  - what do you do
+  - how old are you
+  - you are smart
+  - tell me about yourself
+  - what are you
+  - nice to meet you
+  - are you intelligent
+  - do you have a name
+  - what can i ask you
+  - how does this work
+  - what is christ university
+  - how big is this campus
+  - do you like your job
+  - are you ai
+  - you are cute
+  - what languages do you speak
+  - how can you help me
+  - who built this robot
+  - how many floors does this building have
+  - what is this place
+  - is this the central block
+  - are you working
+  - are you listening
+  - what is your purpose
+out_of_scope:
+  - what is the weather today
+  - who won the cricket match
+  - tell me a joke
+  - what is the capital of france
+  - book a cab for me
+  - order food
+  - what is the stock price of tcs
+  - play a song
+  - what is 25 times 4
+  - who is the prime minister
+  - how do i cook biryani
+  - what is the news today
+  - can you do my homework
+  - what time is the next metro
+  - recommend a movie
+  - how is the traffic
+  - where is the nearest atm outside
+  - book a hotel room
+  - what is the price of gold
+  - translate hello to french
+  - tell me a story
+  - how to lose weight
+  - what is bitcoin
+  - which phone should i buy
+  - when is the ipl final
+  - how far is the airport
+  - write me an essay
+  - what is the meaning of life
+  - can you hack wifi
+  - show me instagram
+  - what is love

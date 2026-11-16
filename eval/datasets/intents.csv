@@ -1,0 +1,573 @@
+text,intent,split
+how to reach health centre,navigate,test
+guide me to the council room,navigate,test
+i am looking for the department of psychology,navigate,test
+wheres the nearest toilet,navigate,test
+where is social work department,navigate,test
+where is room 806,navigate,test
+where is the hod office,navigate,val
+i need to go to room 812,navigate,val
+how do i get to the basement,navigate,val
+where is the mba department,navigate,val
+where do i submit my documents,navigate,val
+where is the exit,navigate,val
+where is reception,navigate,train
+where can i drink water,navigate,train
+location of stationery shop,navigate,train
+where is the washroom,navigate,train
+where is the xerox shop,navigate,train
+where is the commerce department,navigate,train
+navigate to green view studio,navigate,train
+where is ccd,navigate,train
+where can i get a printout,navigate,train
+where is the lift,navigate,train
+which floor is room 1004,navigate,train
+where is the faculty staff room,navigate,train
+where can i find the mca lab,navigate,train
+way to the restroom,navigate,train
+zerox shop where,navigate,train
+where is the media studies department,navigate,train
+directions to the accounts office,navigate,train
+can you show me the way to the admissions office,navigate,train
+which floor is the law department on,navigate,train
+where is the computer science department,navigate,train
+how do i get to the library,navigate,train
+how do i go to sky view studio,navigate,train
+how to go to lost and found,navigate,train
+show me the route to the conference room,navigate,train
+take me to the canteen,navigate,train
+were is the library,navigate,train
+directions to room 215 please,navigate,train
+how do i reach the 9th floor,navigate,train
+when will the office open tomorrow,facility_hours,test
+are offices open on third saturday,facility_hours,test
+is the library open on public holidays,facility_hours,test
+when does it open,facility_hours,test
+is the stationery shop open on saturday,facility_hours,test
+what time does reception open,facility_hours,val
+is the canteen open now,facility_hours,val
+office hours please,facility_hours,val
+library timings,facility_hours,val
+what are its timings,facility_hours,val
+when does ccd close,facility_hours,train
+what time does the processing office open,facility_hours,train
+when does the admission office close,facility_hours,train
+is the admissions office open today,facility_hours,train
+what time does the library open tomorrow,facility_hours,train
+is the library open now,facility_hours,train
+can i visit the accounts office at 4 pm,facility_hours,train
+what time does the library close,facility_hours,train
+is the library open during vacation,facility_hours,train
+timing for ccd,facility_hours,train
+is the xerox shop open,facility_hours,train
+timings of the reception,facility_hours,train
+until what time is the library open,facility_hours,train
+is the office closed now,facility_hours,train
+what time is lunch break for the office,facility_hours,train
+when does the accounts office open,facility_hours,train
+library open till what time,facility_hours,train
+is accounts open during lunch,facility_hours,train
+till when is the gourmet open,facility_hours,train
+library working hours,facility_hours,train
+what are the office timings,facility_hours,train
+health centre timings,facility_hours,train
+opening hours of lost and found,facility_hours,train
+xerox shop timing,facility_hours,train
+what are the library hours on sunday,facility_hours,train
+is the college closed today,college_open,test
+is campus open on sunday,college_open,test
+is the block open today,college_open,test
+is it holiday today,college_open,test
+are you open today,college_open,test
+is college open during christmas vacation,college_open,val
+is the university working today,college_open,val
+is christ open on saturday,college_open,val
+is it a holiday tomorrow,college_open,val
+is college open this saturday,college_open,val
+college working today or not,college_open,train
+are colleges closed today,college_open,train
+is today a holiday,college_open,train
+is the university open this weekend,college_open,train
+is college open on deepavali,college_open,train
+is the university closed tomorrow,college_open,train
+is today off,college_open,train
+is college open tomorrow,college_open,train
+is it a working saturday,college_open,train
+is today a working day,college_open,train
+is christ university open today,college_open,train
+is the campus closed today,college_open,train
+is campus working on sunday,college_open,train
+is there college today,college_open,train
+is the college open on republic day,college_open,train
+can i come to college today,college_open,train
+is the college open on third saturday,college_open,train
+is tomorrow a working day,college_open,train
+is the institution open now,college_open,train
+is college functioning today,college_open,train
+is the college open today,college_open,train
+what is bca,course_info,test
+tell me more about this course,course_info,test
+how many years is ba llb,course_info,test
+information about phd in computer science,course_info,test
+details about bsc computer science and mathematics,course_info,test
+explain the bsc computer science statistics course,course_info,val
+how long is the mba,course_info,val
+tell me about the honours programme,course_info,val
+what is the msc ai and ml programme about,course_info,val
+tell me about llb,course_info,val
+about the phd ai programme,course_info,train
+course details for bcom,course_info,train
+tell me about bba,course_info,train
+what is the syllabus of bca,course_info,train
+describe the ma psychology programme,course_info,train
+what is ba journalism about,course_info,train
+information on the master of computer applications,course_info,train
+is bsc psychology a three year course,course_info,train
+is mca a two year course,course_info,train
+tell me about the forensic science course,course_info,train
+what will i learn in mca,course_info,train
+what does the mca program cover,course_info,train
+tell me about mca,course_info,train
+how long is the mca course,course_info,train
+what is the duration of bca,course_info,train
+how many semesters in bca,course_info,train
+duration of msc ai ml,course_info,train
+is there an msc in data science,course_info,train
+tell me about the msc computer science,course_info,train
+what is the one year msc ai ml,course_info,train
+what is the msc data science course,course_info,train
+what is ma media and communication studies,course_info,train
+fees for msc data science,course_fees,test
+when is the fee payment deadline,course_fees,test
+is the fee different for other states,course_fees,test
+what is the total fee for bca,course_fees,test
+fees for karnataka students for bsc,course_fees,test
+mca fees,course_fees,val
+tell me the fees,course_fees,val
+what is the fee for other state students,course_fees,val
+how much do i have to pay for msc computer science,course_fees,val
+fee structure for msc ai and ml,course_fees,val
+annual fees for the mba program,course_fees,train
+what is the fee for mca,course_fees,train
+cost of the ba llb course,course_fees,train
+how much does bcom cost,course_fees,train
+how much is the bca fee,course_fees,train
+what are the fees for nri students for mca,course_fees,train
+what is the semester fee,course_fees,train
+how much is the admission fee,course_fees,train
+fees for foreign nationals,course_fees,train
+how much does the mba cost,course_fees,train
+fees of the bca honours,course_fees,train
+what is the fee for saarc students,course_fees,train
+first year fee for mca,course_fees,train
+mca fees for oci,course_fees,train
+fees for the one year msc,course_fees,train
+what are the charges for msc ai ml,course_fees,train
+how much is the phd fee,course_fees,train
+what is the registration fee,course_fees,train
+fee for international students,course_fees,train
+what about for oci students,course_fees,train
+second year fees for bca,course_fees,train
+and for nri,course_fees,train
+how much is the course,course_fees,train
+what is the fee for third year,course_fees,train
+which degrees are available,course_list,test
+which courses can i do after 12th,course_list,test
+list all computer science courses,course_list,test
+what are the available programs,course_list,test
+show me all the courses,course_list,test
+which bachelors courses are there,course_list,val
+what ug courses are there,course_list,val
+list of courses in economics,course_list,val
+which courses are there in the business school,course_list,val
+what can i study here,course_list,val
+what are the courses in media studies,course_list,train
+list of pg courses,course_list,train
+what programmes does the law school offer,course_list,train
+programmes in social work,course_list,train
+what are the options for postgraduate study,course_list,train
+do you have any data science courses,course_list,train
+what phd programmes are available,course_list,train
+which masters programs do you have,course_list,train
+what courses does the commerce department have,course_list,train
+courses offered by the psychology department,course_list,train
+what courses do you offer,course_list,train
+what undergraduate programmes does christ offer,course_list,train
+courses in commerce,course_list,train
+list of doctoral programmes,course_list,train
+pg programmes in psychology,course_list,train
+which courses are available in computer science,course_list,train
+which courses are offered in english department,course_list,train
+show courses for computer science department,course_list,train
+courses offered in life sciences,course_list,train
+course list please,course_list,train
+what are the mba specialisations,course_list,train
+details about admissions 2027,admissions,test
+can i apply for the msc now,admissions,test
+eligibility for mca admission,admissions,test
+when is the last date to apply,admissions,test
+how to get into christ university,admissions,test
+is admission open now,admissions,val
+admission process,admissions,val
+how do i register for admission,admissions,val
+are admissions closed,admissions,val
+how do i apply for phd,admissions,val
+admission enquiry,admissions,train
+when does admission start,admissions,train
+where do i apply online,admissions,train
+what is the application process,admissions,train
+how do i apply for admission,admissions,train
+what is the entrance process,admissions,train
+what is the admission procedure,admissions,train
+what documents are needed for admission,admissions,train
+what is the selection process,admissions,train
+i want to apply for bcom,admissions,train
+i want to take admission,admissions,train
+admission details please,admissions,train
+how can i get admission in mca,admissions,train
+admission for international students,admissions,train
+when are the admission interviews,admissions,train
+can my son get admission here,admissions,train
+admission interview dates,admissions,train
+whom do i contact for admission,admissions,train
+how to join the mba program,admissions,train
+when is the next interview session,admissions,train
+how to apply for bca,admissions,train
+number for general enquiries,contact,test
+how do i get in touch with admissions,contact,test
+contact for fee queries,contact,test
+give me the admission office contact,contact,test
+general email id,contact,test
+can i have the phone number of reception,contact,val
+contact information,contact,val
+phone number of christ university,contact,val
+how do i contact the admissions office,contact,val
+can i get the college email address,contact,val
+give me the contact number,contact,train
+admissions phone number,contact,train
+landline number of christ,contact,train
+whom should i call,contact,train
+what is the enquiry number,contact,train
+i need the admissions email,contact,train
+what is the reception phone number,contact,train
+how can i contact the university,contact,train
+send me the contact details,contact,train
+office phone number,contact,train
+contact details please,contact,train
+customer support number,contact,train
+how do i email the college,contact,train
+what is the helpline number,contact,train
+email for admissions,contact,train
+how do i reach the university by phone,contact,train
+what is the support number,contact,train
+mobile number for admission,contact,train
+what number should i call,contact,train
+where can i call for help,contact,train
+what is the email id of the college,contact,train
+i want to meet the class teacher,faculty,test
+where is the teachers room,faculty,test
+where is the faculty cabin,faculty,test
+where do faculty members sit,faculty,test
+where can i meet the faculty,faculty,test
+where is the cabin of dr joseph,faculty,val
+i want to meet my professor,faculty,val
+where is the professor of psychology,faculty,val
+i need to meet the mca coordinator,faculty,val
+where is professor rao cabin,faculty,val
+how do i meet a teacher,faculty,train
+where can i find dr kumar,faculty,train
+where do law faculty sit,faculty,train
+i want to meet the hod of computer science,faculty,train
+where is mam cabin,faculty,train
+where is my guide,faculty,train
+can you find my teacher,faculty,train
+where is dr thomas sitting,faculty,train
+can you tell me where the professors are,faculty,train
+how can i find staff details,faculty,train
+who teaches mca,faculty,train
+where is professor sharma,faculty,train
+faculty details,faculty,train
+i am looking for a lecturer,faculty,train
+which floor is professor menon on,faculty,train
+i have an appointment with a professor,faculty,train
+how do i find sir,faculty,train
+locate faculty member,faculty,train
+how do i contact a faculty member,faculty,train
+staff room of computer science,faculty,train
+where do computer science teachers sit,faculty,train
+what holidays are there in november,events,test
+events this week,events,test
+any upcoming holidays,events,test
+when is the theatre festival,events,test
+when is gratitude day,events,test
+when does summer vacation start,events,val
+when is founders day,events,val
+next public holiday,events,val
+when is the graduation ceremony,events,val
+when is the christmas vacation,events,val
+is there any fest,events,train
+any cultural fest coming up,events,train
+when is the sports fest,events,train
+what is happening this month,events,train
+when is the athletic meet,events,train
+any events tomorrow,events,train
+when is daksh,events,train
+when is the next holiday,events,train
+list of holidays,events,train
+is there any event on saturday,events,train
+when do classes reopen,events,train
+when is magnificat,events,train
+when is convocation,events,train
+when is nritta,events,train
+whats happening on campus,events,train
+what events are coming up,events,train
+when are the exams,events,train
+when is the open day,events,train
+when is the end semester exam,events,train
+upcoming events at central campus,events,train
+what is the academic calendar,events,train
+can i borrow books,library,test
+library membership,library,test
+library website link,library,test
+digital library access,library,test
+how do i renew a book,library,val
+is there a library here,library,val
+is there a reading room,library,val
+how to search for books,library,val
+library services,library,train
+can outsiders use the library,library,train
+open the library website,library,train
+does the library have wifi,library,train
+i want to return a book,library,train
+e resources of the library,library,train
+how do i access the library online,library,train
+how to find a book in the library,library,train
+library website,library,train
+can i get a library card,library,train
+library facilities,library,train
+library rules,library,train
+library catalogue,library,train
+can i sit in the library,library,train
+how many books can i borrow,library,train
+does the library have journals,library,train
+library link please,library,train
+where can i read books,library,train
+library contact,library,train
+can i photocopy in the library,library,train
+can visitors use the library,library,train
+online library portal,library,train
+human please,human,test
+i need a human,human,test
+this is not helping get me a human,human,test
+please get me a real person,human,test
+let me talk to a staff member,human,val
+get me someone,human,val
+is there anyone i can speak to,human,val
+can you connect me to the admissions team,human,val
+i want to talk to a person,human,train
+i need to speak with the manager,human,train
+i need help from a staff,human,train
+i would like to speak with someone in charge,human,train
+can a staff member come here,human,train
+can i talk to the front desk,human,train
+talk to a real person,human,train
+can i talk to someone about my problem,human,train
+connect me to reception,human,train
+i need to talk to an officer,human,train
+can someone help me,human,train
+i prefer to talk to a human,human,train
+speak to a person,human,train
+can i speak to someone,human,train
+i want to complain,human,train
+i want to speak to the receptionist,human,train
+transfer me to a person,human,train
+call a person please,human,train
+can i meet someone from administration,human,train
+please call the staff,human,train
+help desk person please,human,train
+i need personal assistance,human,train
+someone collapsed,urgent,test
+i lost my child,urgent,test
+it is an emergency,urgent,test
+i am having chest pain,urgent,test
+my kid is lost,urgent,test
+he fell down the stairs,urgent,val
+i have a headache and fever,urgent,val
+i feel sick,urgent,val
+i got hurt,urgent,val
+i need first aid urgently,urgent,val
+emergency,urgent,train
+call an ambulance,urgent,train
+there is an accident,urgent,train
+i am not feeling well,urgent,train
+i need a doctor,urgent,train
+my child is missing,urgent,train
+i need medical help,urgent,train
+i feel like vomiting,urgent,train
+i am hurt,urgent,train
+i feel dizzy,urgent,train
+someone is bleeding,urgent,train
+someone is harassing me,urgent,train
+i need help urgently,urgent,train
+please help someone is unconscious,urgent,train
+someone fainted,urgent,train
+there is a fire,urgent,train
+i cant breathe properly,urgent,train
+i am feeling unwell,urgent,train
+help me i am injured,urgent,train
+my friend is sick,urgent,train
+there is a medical emergency,urgent,train
+hi buddy,greeting,test
+hello,greeting,test
+hello is anyone there,greeting,test
+hello assistant,greeting,test
+hello there,greeting,test
+hello hello,greeting,val
+hello good morning,greeting,val
+hello can you help me,greeting,val
+hi robot,greeting,val
+hi,greeting,val
+hey,greeting,train
+hai,greeting,train
+hey are you there,greeting,train
+hi there,greeting,train
+hi i need some help,greeting,train
+morning,greeting,train
+hi how are you,greeting,train
+hi christ assistant,greeting,train
+hey there,greeting,train
+hello i have a question,greeting,train
+good evening,greeting,train
+hii,greeting,train
+greetings,greeting,train
+namaste,greeting,train
+good morning,greeting,train
+good morning sir,greeting,train
+good afternoon,greeting,train
+yo,greeting,train
+hello madam,greeting,train
+hi good afternoon,greeting,train
+hey robot,greeting,train
+cool thanks,thanks_bye,test
+i am done,thanks_bye,test
+ok thank you,thanks_bye,test
+nothing else,thanks_bye,test
+see you,thanks_bye,test
+bye,thanks_bye,val
+bye bye,thanks_bye,val
+okay got it thanks,thanks_bye,val
+no more questions,thanks_bye,val
+thank you,thanks_bye,val
+ok thats all for now,thanks_bye,train
+see you later,thanks_bye,train
+thanks,thanks_bye,train
+thank u,thanks_bye,train
+goodbye,thanks_bye,train
+cheers,thanks_bye,train
+thank you so much,thanks_bye,train
+have a nice day,thanks_bye,train
+thats all,thanks_bye,train
+thanks a lot,thanks_bye,train
+much appreciated,thanks_bye,train
+thanks bye,thanks_bye,train
+alright thank you,thanks_bye,train
+ok bye,thanks_bye,train
+thanks robot,thanks_bye,train
+thanks for your help,thanks_bye,train
+done thanks,thanks_bye,train
+that is helpful thank you,thanks_bye,train
+great thanks,thanks_bye,train
+you have been very helpful,thanks_bye,train
+thats it,thanks_bye,train
+please say that once more,repeat,test
+say that again,repeat,test
+repeat the answer,repeat,test
+sorry,repeat,test
+say again,repeat,val
+please repeat that,repeat,val
+huh,repeat,val
+could you repeat the last answer,repeat,val
+excuse me,repeat,train
+pardon,repeat,train
+can you repeat,repeat,train
+repeat the directions,repeat,train
+come again,repeat,train
+i didnt catch that,repeat,train
+what,repeat,train
+tell me again,repeat,train
+can you speak again,repeat,train
+again please,repeat,train
+what did you say,repeat,train
+repeat please,repeat,train
+what was that,repeat,train
+repeat it,repeat,train
+repeat the fees,repeat,train
+louder please,repeat,train
+what did you just say,repeat,train
+sorry i didnt hear,repeat,train
+can you say it again slowly,repeat,train
+i couldnt hear you,repeat,train
+i missed that,repeat,train
+one more time,repeat,train
+do you like your job,smalltalk,test
+nice to meet you,smalltalk,test
+who are you,smalltalk,test
+you are cute,smalltalk,test
+is this the central block,smalltalk,test
+what can i ask you,smalltalk,val
+how many floors does this building have,smalltalk,val
+how big is this campus,smalltalk,val
+are you working,smalltalk,val
+who made you,smalltalk,val
+what languages do you speak,smalltalk,train
+what can you do,smalltalk,train
+you are smart,smalltalk,train
+are you listening,smalltalk,train
+what do you do,smalltalk,train
+are you intelligent,smalltalk,train
+what is your purpose,smalltalk,train
+how can you help me,smalltalk,train
+are you human,smalltalk,train
+who built this robot,smalltalk,train
+how does this work,smalltalk,train
+do you have a name,smalltalk,train
+what is your name,smalltalk,train
+what is christ university,smalltalk,train
+what are you,smalltalk,train
+tell me about yourself,smalltalk,train
+are you a robot,smalltalk,train
+how old are you,smalltalk,train
+what is this place,smalltalk,train
+are you ai,smalltalk,train
+how are you,smalltalk,train
+book a hotel room,out_of_scope,test
+show me instagram,out_of_scope,test
+who is the prime minister,out_of_scope,test
+how do i cook biryani,out_of_scope,test
+what time is the next metro,out_of_scope,test
+what is the news today,out_of_scope,val
+where is the nearest atm outside,out_of_scope,val
+can you do my homework,out_of_scope,val
+what is the stock price of tcs,out_of_scope,val
+order food,out_of_scope,val
+can you hack wifi,out_of_scope,train
+what is 25 times 4,out_of_scope,train
+what is bitcoin,out_of_scope,train
+translate hello to french,out_of_scope,train
+how to lose weight,out_of_scope,train
+recommend a movie,out_of_scope,train
+tell me a story,out_of_scope,train
+how is the traffic,out_of_scope,train
+when is the ipl final,out_of_scope,train
+which phone should i buy,out_of_scope,train
+book a cab for me,out_of_scope,train
+what is love,out_of_scope,train
+who won the cricket match,out_of_scope,train
+play a song,out_of_scope,train
+what is the capital of france,out_of_scope,train
+what is the meaning of life,out_of_scope,train
+how far is the airport,out_of_scope,train
+what is the weather today,out_of_scope,train
+write me an essay,out_of_scope,train
+tell me a joke,out_of_scope,train
+what is the price of gold,out_of_scope,train
