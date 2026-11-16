@@ -1,5 +1,6 @@
 // Camera + microphone for the kiosk. Frames and audio go to the server; nothing is stored.
 import { sendRaw, stopSpeaking } from "/static/app.js?v=9";
+import { t } from "/static/i18n.js?v=9";
 
 const body = document.body;
 const TARGET_RATE = 16000;
@@ -99,10 +100,10 @@ function startMic(cfg) {
     body.dataset.mic = wanted ? "on" : "off";
     for (const b of document.querySelectorAll("button[data-mic]")) {
       b.setAttribute("aria-pressed", String(wanted));
-      b.setAttribute("aria-label", wanted ? "Microphone on. Tap to turn it off" : "Microphone off. Tap to speak");
-      b.title = wanted ? "Listening. Tap to turn the microphone off" : "Tap to turn the microphone on";
+      b.setAttribute("aria-label", t(wanted ? "mic_aria_on" : "mic_aria_off"));
+      b.title = t(wanted ? "mic_aria_on" : "mic_aria_off");
       const label = b.querySelector(".mic-label");
-      if (label) label.textContent = wanted ? "Listening… tap to stop" : "Tap to speak";
+      if (label) label.textContent = t(wanted ? "mic_label_on" : "mic_label_off");
     }
     window.dispatchEvent(new CustomEvent("kiosk:mic", { detail: { on: wanted } }));
   };
@@ -175,6 +176,7 @@ function startMic(cfg) {
   // A new visitor always starts with the microphone off.
   window.addEventListener("kiosk:reset", () => { if (wanted) turnOff(); });
   window.addEventListener("kiosk:answer", () => { if (wanted) turnOff(); });
+  window.addEventListener("kiosk:lang", announce); // relabel the mic buttons in the new language
   announce();
 }
 
