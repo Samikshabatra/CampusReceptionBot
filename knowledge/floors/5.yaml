@@ -1,0 +1,20 @@
+# Floor 5 layout, transcribed from the FINAL map (2026-11-04).
+# Rows of cells (map order); span = relative width/height; gap = blank.
+floor: "5"
+title: "School of Law"
+seating: false
+rows:
+  - box: [0, 0, 14, 60]
+    direction: vertical
+    cells: ["gap", "506", "507", "508", "509", "gap"]
+  - box: [14, 0, 86, 10]
+    direction: horizontal
+    cells: ["gap", "505", "504", "503", "502"]
+  - box: [86, 0, 100, 60]
+    direction: vertical
+    cells: ["wd", {"id": "placement_office_law", "span": 2}, {"id": "director_of_law", "span": 2}, "515"]
+  - box: [14, 50, 86, 60]
+    direction: horizontal
+    cells: ["510", "511", "512", "513", "lw", "514"]
+extras:
+  - {id: f_cabin_5, box: [42, 14, 58, 16.8]}

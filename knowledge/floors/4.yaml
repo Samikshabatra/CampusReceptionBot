@@ -1,0 +1,18 @@
+# Floor 4 layout, transcribed from the FINAL map (2026-11-04).
+# Rows of cells (map order); span = relative width/height; gap = blank.
+floor: "4"
+title: "School of Law"
+seating: true
+rows:
+  - box: [0, 0, 14, 60]
+    direction: vertical
+    cells: ["gap", "406", "407", "408", "409", "gap"]
+  - box: [14, 0, 86, 10]
+    direction: horizontal
+    cells: ["gap", "405", "404", "403", "402"]
+  - box: [86, 0, 100, 60]
+    direction: vertical
+    cells: ["wd", {"id": "faculty_cabin_4", "span": 4}, "415"]
+  - box: [14, 50, 86, 60]
+    direction: horizontal
+    cells: ["411", "412", "413", "lw", "414"]

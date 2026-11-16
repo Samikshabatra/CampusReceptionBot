@@ -1,0 +1,18 @@
+# Floor 7 layout, transcribed from data/raw/central_block_map.webp.
+# Rows of cells (map order); span = relative width/height; gap = blank.
+floor: "7"
+title: "Department of Psychological Sciences"
+seating: false
+rows:
+  - box: [0, 0, 14, 60]
+    direction: vertical
+    cells: ["gap", {"id": "dept_psychological_sciences", "span": 2}, {"id": "washroom", "span": 2}, "gap"]
+  - box: [14, 0, 86, 10]
+    direction: horizontal
+    cells: ["715", "gw", "714", "713", "711"]
+  - box: [86, 0, 100, 60]
+    direction: vertical
+    cells: ["wd", {"id": "faculty_cabin_7", "span": 3}, {"id": "gap", "span": 2}]
+  - box: [14, 50, 86, 60]
+    direction: horizontal
+    cells: ["716", "717", "lw", "718", "719"]
