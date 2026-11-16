@@ -1,0 +1,52 @@
+# All tunable settings for the reception assistant.
+timezone: Asia/Kolkata
+knowledge_dir: knowledge
+kiosk_node: "G:kiosk"   # visitors start at the Reception, Ground floor
+route_preference: lift
+lift_cost_per_floor: 6.0
+stairs_cost_per_floor: 12.0
+intent_threshold: 0.35  # val: coverage 0.91, accuracy-when-answered 0.925
+fuzzy_threshold: 80
+retrieval_threshold: 0.65  # calibrated: in-scope >= 0.70, out-of-scope <= 0.60 (bge-small)
+top_k: 5
+max_speech_words: 40
+max_input_chars: 500
+llm:
+  provider: ollama
+  model: llama3.2:3b   # installed locally; any Ollama chat model works
+  base_url: http://localhost:11434
+  timeout_s: 30.0
+embedding_model: BAAI/bge-small-en-v1.5
+intent_model_path: models/intent.joblib
+seed: 42
+vision:                 # face boxes are fractions of the camera frame
+  window_s: 1.5         # look-back window for the approach rule
+  require_approach: false  # false: greet a centred face held for dwell_s; true: also require walking closer
+  dwell_s: 1.0          # must stay this long before a greeting
+  center_tolerance: 0.25
+  max_drift: 0.2        # sideways movement allowed (walking past moves more)
+  growth_ratio: 1.15    # face grew this much = moving towards the kiosk
+  near_height: 0.18     # or already this big = close
+  min_face: 0.08        # ignore faces smaller than this (far away)
+  cooldown_s: 8.0
+  max_age_s: 1.0
+  iou_match: 0.2
+  haar_scale_factor: 1.1
+  haar_min_neighbors: 5
+  frame_interval_ms: 200
+speech:
+  model: base.en        # faster-whisper; small.en is more accurate but slower
+  compute_type: int8
+  beam_size: 1
+  vad_rms_threshold: 0.015
+  silence_ms: 900
+  min_speech_ms: 300
+  max_utterance_s: 10.0
+kiosk:
+  port: 8765
+  absent_timeout_s: 10.0
+  idle_timeout_s: 20.0
+  banner_s: 6.0
+analytics:
+  db_path: data/analytics.db
+  admin_pin: "2027"     # change before deployment, or set RECEPTION_ADMIN_PIN
