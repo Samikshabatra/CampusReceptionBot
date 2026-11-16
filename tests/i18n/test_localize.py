@@ -41,7 +41,9 @@ def test_localize_text_writes_ordinals_as_digits() -> None:
 
 def test_hindi_floor_words_become_digits() -> None:
     tr = FakeTranslator({"The Library is on the 6 floor.": "पुस्तकालय छठी मंजिल पर है।"})
-    assert localize_text("The Library is on the 6th floor.", "hi", tr) == "पुस्तकालय 6वीं मंजिल पर है।"
+    assert (
+        localize_text("The Library is on the 6th floor.", "hi", tr) == "पुस्तकालय 6वीं मंजिल पर है।"
+    )
 
 
 def test_english_response_is_returned_untouched() -> None:
@@ -52,7 +54,9 @@ def test_english_response_is_returned_untouched() -> None:
 def test_localize_response_translates_speech_steps_and_option_labels() -> None:
     r = Response(
         speech="The Library is on the 6th floor.",
-        card=Card(kind="map", data={"steps": ["Walk to the nearest lift."], "options": ["Timings"]}),
+        card=Card(
+            kind="map", data={"steps": ["Walk to the nearest lift."], "options": ["Timings"]}
+        ),
         intent="navigate",
         confidence=0.9,
     )

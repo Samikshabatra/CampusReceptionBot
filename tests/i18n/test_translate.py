@@ -6,7 +6,9 @@ from reception.config import I18nConfig
 from reception.i18n.translate import NllbTranslator, digits_kept
 
 MODEL = Path(I18nConfig().model_dir)
-needs_model = pytest.mark.skipif(not (MODEL / "model.bin").exists(), reason="NLLB model not downloaded")
+needs_model = pytest.mark.skipif(
+    not (MODEL / "model.bin").exists(), reason="NLLB model not downloaded"
+)
 
 
 @pytest.fixture(scope="module")

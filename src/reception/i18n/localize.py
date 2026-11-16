@@ -65,7 +65,8 @@ def localize_text(text: str, lang: Lang, tr: Translator) -> str:
         translated = tr.translate(plain, "en", lang)
         if lang == "hi":
             translated = _HINDI_FLOOR.sub(lambda m: f"{_HINDI_ORDINALS[m.group(1)]}वीं", translated)
-        out.append(translated if translated.strip() and digits_kept(plain, translated) else sentence)
+        kept = translated.strip() and digits_kept(plain, translated)
+        out.append(translated if kept else sentence)
     return " ".join(out)
 
 

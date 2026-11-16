@@ -133,9 +133,15 @@ def test_noise_reported_and_not_answered(kb: KnowledgeBase, classifier, index) -
     cfg = load_config(Path("configs/app.yaml"))
     cfg.analytics.db_path = Path(tempfile.mkdtemp()) / "analytics.db"
     assistant = Assistant(kb, cfg, classifier, index, FakeLLM([]), build_graph(kb, cfg))
-    app = create_app(lambda: assistant, detector_factory=lambda c: NearFace(), transcriber_factory=lambda c: NoiseSTT())
+    app = create_app(
+        lambda: assistant,
+        detector_factory=lambda c: NearFace(),
+        transcriber_factory=lambda c: NoiseSTT(),
+    )
     with TestClient(app) as c, c.websocket_connect("/ws") as ws:
         ws.receive_json()
-        ws.send_json({"type": "audio", "pcm": b64(np.zeros(16000, dtype=np.float32).tobytes()), "t": 1.0})
+        ws.send_json(
+            {"type": "audio", "pcm": b64(np.zeros(16000, dtype=np.float32).tobytes()), "t": 1.0}
+        )
         assert until(ws, "noise") == {"type": "noise"}
         assert ws.receive_json() == {"type": "state", "state": "listening"}

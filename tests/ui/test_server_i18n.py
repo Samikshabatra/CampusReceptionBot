@@ -62,7 +62,9 @@ def assistant(kb: KnowledgeBase, classifier, index) -> Assistant:  # type: ignor
     return Assistant(kb, cfg, classifier, index, FakeLLM([]), build_graph(kb, cfg))
 
 
-def make_client(assistant: Assistant, translator: object, stt: HindiSTT | None = None) -> TestClient:
+def make_client(
+    assistant: Assistant, translator: object, stt: HindiSTT | None = None
+) -> TestClient:
     app = create_app(
         lambda: assistant,
         detector_factory=lambda c: NoFace(),
@@ -84,7 +86,9 @@ def test_choosing_a_language_greets_in_it(assistant: Assistant) -> None:
         assert until(ws, "language") == {"type": "language", "lang": "kn"}
         r = until(ws, "response")["data"]
         assert r["intent"] == "greeting" and r["speech"].startswith("[kn] ")
-        assert r["lang"] == "kn" and len(r["card"]["data"]["option_labels"]) == len(r["card"]["data"]["options"])
+        assert r["lang"] == "kn" and len(r["card"]["data"]["option_labels"]) == len(
+            r["card"]["data"]["options"]
+        )
 
 
 def test_hindi_question_answered_in_hindi(assistant: Assistant) -> None:
@@ -95,7 +99,9 @@ def test_hindi_question_answered_in_hindi(assistant: Assistant) -> None:
         ws.send_json({"type": "ask", "text": HINDI_Q, "t": 2.0})
         r = until(ws, "response")["data"]
         assert r["card"]["data"]["targets"] == ["library"]
-        assert r["speech"].startswith("[hi] ") and all(s.startswith("[hi] ") for s in r["card"]["data"]["steps"])
+        assert r["speech"].startswith("[hi] ") and all(
+            s.startswith("[hi] ") for s in r["card"]["data"]["steps"]
+        )
 
 
 def test_spoken_hindi_uses_hindi_speech_model(assistant: Assistant) -> None:
