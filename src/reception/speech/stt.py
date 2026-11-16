@@ -3,6 +3,7 @@
 import base64
 import binascii
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -55,16 +56,26 @@ class Transcriber:
     def __init__(self, cfg: SpeechConfig) -> None:
         """Remember settings; the model loads on first real audio."""
         self.cfg = cfg
-        self._model: Any = None
+        self._models: dict[str, Any] = {}
 
-    def _load(self) -> Any:
-        if self._model is None:
+    def model_for(self, language: str) -> str:
+        """Whisper model (name or local folder) used for ``language``."""
+        if language == "en":
+            return self.cfg.model
+        local = self.cfg.language_models.get(language)
+        if local and (Path(local) / "model.bin").exists():
+            return local
+        return self.cfg.fallback_model
+
+    def _load(self, language: str) -> Any:
+        name = self.model_for(language)
+        if name not in self._models:
             from faster_whisper import WhisperModel
 
-            self._model = WhisperModel(
-                self.cfg.model, device="cpu", compute_type=self.cfg.compute_type
+            self._models[name] = WhisperModel(
+                name, device="cpu", compute_type=self.cfg.compute_type
             )
-        return self._model
+        return self._models[name]
 
     def prompt_for(self, language: str) -> str | None:
         """Vocabulary hint for Whisper in ``language`` (English names, or native script)."""
@@ -87,13 +98,16 @@ class Transcriber:
             return Transcript("", 0.0, duration)
         if speech_seconds(audio, self.cfg) < self.cfg.min_voice_s:
             return Transcript("", 0.0, duration, is_noise=True)  # noise only: never reaches Whisper
-        segments, _ = self._load().transcribe(
-            audio,
+        lead_in = np.zeros(int(self.cfg.lead_in_s * SAMPLE_RATE), dtype=np.float32)
+        segments, _ = self._load(language).transcribe(
+            np.concatenate([lead_in, audio]),
             language=language,
             beam_size=self.cfg.beam_size,
             vad_filter=True,
             initial_prompt=self.prompt_for(language),
             condition_on_previous_text=False,
+            temperature=0.0,
+            max_new_tokens=self.cfg.max_new_tokens,
         )
         segs = [
             s

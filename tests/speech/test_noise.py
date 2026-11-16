@@ -32,4 +32,4 @@ def test_clatter_has_no_voice() -> None:
 def test_noise_rejected_before_loading_whisper() -> None:
     t = Transcriber(SpeechConfig())
     out = t.transcribe(noise(2.0, 0.05))
-    assert out.text == "" and out.is_noise and t._model is None
+    assert out.text == "" and out.is_noise and not t._models

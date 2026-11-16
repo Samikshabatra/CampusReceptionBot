@@ -1,4 +1,5 @@
 import base64
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -27,7 +28,7 @@ def test_silence_transcribes_to_nothing() -> None:
 def test_too_short_audio_skipped_without_model() -> None:
     t = Transcriber(SpeechConfig())
     out = t.transcribe(np.zeros(100, dtype=np.float32))
-    assert out.text == "" and t._model is None
+    assert out.text == "" and not t._models
 
 
 def test_prompt_matches_the_chosen_language() -> None:
@@ -38,5 +39,14 @@ def test_prompt_matches_the_chosen_language() -> None:
     assert t.prompt_for("fr") is None
 
 
-def test_default_model_is_multilingual() -> None:
-    assert not SpeechConfig().model.endswith(".en")
+def test_each_language_gets_its_own_model(tmp_path: Path) -> None:
+    (tmp_path / "kn").mkdir()
+    (tmp_path / "kn" / "model.bin").write_bytes(b"x")
+    cfg = SpeechConfig(
+        language_models={"kn": str(tmp_path / "kn"), "hi": str(tmp_path / "missing")}
+    )
+    t = Transcriber(cfg)
+    assert t.model_for("en") == cfg.model
+    assert t.model_for("kn") == str(tmp_path / "kn")
+    assert t.model_for("hi") == cfg.fallback_model  # folder not downloaded
+    assert not cfg.fallback_model.endswith(".en")
