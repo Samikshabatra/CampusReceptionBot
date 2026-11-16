@@ -22,8 +22,10 @@ from starlette.concurrency import run_in_threadpool
 from reception.analytics.hook import AnalyticsHook
 from reception.analytics.store import AnalyticsStore
 from reception.app_factory import build_assistant
-from reception.config import AppConfig, SpeechConfig, VisionConfig
+from reception.config import AppConfig, I18nConfig, SpeechConfig, VisionConfig
 from reception.dialogue.router import Assistant
+from reception.i18n.localize import as_lang, localize_response, to_english
+from reception.i18n.translate import NllbTranslator, Translator
 from reception.kb.loader import KnowledgeError
 from reception.server.browse import browse_router
 from reception.server.session import KioskSession
@@ -57,8 +59,8 @@ class Detector(Protocol):
 class STT(Protocol):
     """Anything that transcribes 16 kHz float32 audio."""
 
-    def transcribe(self, audio: np.ndarray) -> Transcript:
-        """Return the transcript."""
+    def transcribe(self, audio: np.ndarray, language: str = "en") -> Transcript:
+        """Return the transcript of speech in ``language``."""
         ...
 
 
@@ -68,6 +70,7 @@ class AppState:
     assistant: Assistant
     detector: Detector
     transcriber: STT
+    translator: Translator
     hooks: list[Callable[..., None]]
     store: AnalyticsStore
 
@@ -76,6 +79,7 @@ def create_app(
     assistant_factory: Callable[[], Assistant] | None = None,
     detector_factory: Callable[[VisionConfig], Detector] = FaceDetector,
     transcriber_factory: Callable[[SpeechConfig], STT] = Transcriber,
+    translator_factory: Callable[[I18nConfig], Translator] = NllbTranslator,
 ) -> FastAPI:
     """Build the FastAPI app.
 
@@ -83,6 +87,7 @@ def create_app(
         assistant_factory: Builds the Assistant at startup (default: configs/app.yaml).
         detector_factory: Face detector from vision config.
         transcriber_factory: Speech-to-text from speech config.
+        translator_factory: Hindi/Kannada translator from i18n config.
 
     Returns:
         The app (``app.state.kiosk`` holds the live components).
@@ -95,6 +100,7 @@ def create_app(
         state.assistant = (assistant_factory or build_assistant)()
         state.detector = detector_factory(state.assistant.cfg.vision)
         state.transcriber = transcriber_factory(state.assistant.cfg.speech)
+        state.translator = translator_factory(state.assistant.cfg.i18n)
         cfg = state.assistant.cfg
         state.store = AnalyticsStore(cfg.analytics.db_path)
         state.hooks.append(AnalyticsHook(state.store, cfg.timezone))
@@ -167,6 +173,7 @@ def create_app(
             "speech": cfg.speech.model_dump(include={
                 "vad_rms_threshold", "silence_ms", "min_speech_ms", "max_utterance_s"}),
             "kiosk": cfg.kiosk.model_dump(include={"banner_s", "idle_timeout_s"}),
+            "languages": cfg.i18n.languages,
             "ui_version": version,
         }  # fmt: skip
 
@@ -240,13 +247,42 @@ class Connection:
             await self.frame(str(msg.get("jpeg", "")), t)
         elif kind == "audio":
             await self.audio(str(msg.get("pcm", "")), t)
+        elif kind == "language":
+            await self.set_language(msg.get("lang"), t)
         else:
             await self.error(f"unknown type {kind}")
 
+    async def localize(self, r: Response) -> Response:
+        """The response in the visitor's language (English if translation fails)."""
+        lang = as_lang(self.session.lang)
+        if lang == "en":
+            return r
+        try:
+            return await run_in_threadpool(localize_response, r, lang, self.state.translator)
+        except Exception as e:  # a missing model must not silence the kiosk
+            print(f"translation failed, answering in English: {e}")
+            return r
+
+    async def set_language(self, code: object, t: float) -> None:
+        """The visitor picked a language: confirm it and greet them in it."""
+        lang = as_lang(code)
+        changed = lang != self.session.lang
+        self.session.lang = lang
+        await self.ws.send_json({"type": "language", "lang": lang})
+        if not changed:
+            return
+        was_active = self.session.active
+        self.session.on_input(t)
+        if not was_active:
+            self._emit("session_start", session_id=self.session.id, started_by="touch")
+        await self.send_response(self.assistant.greet(self.session.ctx, self._now()))
+
     async def send_response(self, r: Response, extra: dict[str, Any] | None = None) -> None:
-        """Present and send a response, then the next state."""
+        """Localize, present and send a response, then the next state."""
         a = self.assistant
+        r = await self.localize(r)
         data = present(a.kb, a.graph, a.cfg, r)
+        data["lang"] = self.session.lang
         data["session_id"] = self.session.id
         await self.ws.send_json({"type": "response", "data": data})
         if self.session.ctx.ended:
@@ -263,11 +299,18 @@ class Connection:
         if not was_active:
             self._emit("session_start", session_id=self.session.id, started_by="touch")
         await self.ws.send_json({"type": "state", "state": "thinking"})
+        lang = as_lang(self.session.lang)
         started = time.perf_counter()
-        r = await run_in_threadpool(self.assistant.handle, text, self.session.ctx, self._now())
+        english = text
+        if lang != "en":
+            try:
+                english = await run_in_threadpool(to_english, text, lang, self.state.translator)
+            except Exception as e:  # understand what we can rather than fail the visitor
+                print(f"translation failed, using the original text: {e}")
+        r = await run_in_threadpool(self.assistant.handle, english, self.session.ctx, self._now())
         ms = (time.perf_counter() - started) * 1000
-        self._emit("turn", session_id=self.session.id, text=text, response=r, mode=mode,
-                   latency={"answer_ms": ms}, stt=stt)  # fmt: skip
+        self._emit("turn", session_id=self.session.id, text=english, response=r, mode=mode,
+                   latency={"answer_ms": ms}, stt=stt, lang=lang)  # fmt: skip
         await self.send_response(r)
 
     async def frame(self, jpeg_b64: str, t: float) -> None:
@@ -303,7 +346,7 @@ class Connection:
             return
         await self.ws.send_json({"type": "state", "state": "thinking"})
         started = time.perf_counter()
-        tr = await run_in_threadpool(self.state.transcriber.transcribe, pcm)
+        tr = await run_in_threadpool(self.state.transcriber.transcribe, pcm, self.session.lang)
         stt_ms = (time.perf_counter() - started) * 1000
         if tr.is_noise:
             await self.ws.send_json({"type": "noise"})  # only background noise: nothing to answer

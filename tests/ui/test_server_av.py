@@ -25,7 +25,8 @@ class FixedSTT:
     def __init__(self, text: str) -> None:
         self.text = text
 
-    def transcribe(self, audio: np.ndarray) -> Transcript:
+    def transcribe(self, audio: np.ndarray, language: str = "en") -> Transcript:
+        self.language = language
         return Transcript(self.text, -0.2, len(audio) / 16000)
 
 
@@ -126,7 +127,7 @@ def test_config_has_ui_version(client: TestClient) -> None:
 
 def test_noise_reported_and_not_answered(kb: KnowledgeBase, classifier, index) -> None:  # type: ignore[no-untyped-def]
     class NoiseSTT:
-        def transcribe(self, audio: np.ndarray) -> Transcript:
+        def transcribe(self, audio: np.ndarray, language: str = "en") -> Transcript:
             return Transcript("", 0.0, 1.0, is_noise=True)
 
     cfg = load_config(Path("configs/app.yaml"))
