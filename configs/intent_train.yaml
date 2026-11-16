@@ -1,0 +1,6 @@
+# Intent classifier training.
+app_config: configs/app.yaml   # embedding model, seed, output path
+split_seed: 42                 # documented seed for the fixed train/val/test split
+val_fraction: 0.15
+test_fraction: 0.15
+mlflow_uri: sqlite:///mlflow.db
