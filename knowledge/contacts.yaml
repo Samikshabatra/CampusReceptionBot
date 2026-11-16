@@ -1,0 +1,9 @@
+# Verified contacts and links (given by the team, 2026-11-04).
+- {id: support_1, label: General & Customer Support, kind: phone, value: "+91 80 4012 9100", topic: general}
+- {id: support_2, label: General & Customer Support, kind: phone, value: "+91 80 4012 9600", topic: general}
+- {id: admissions_1, label: Admissions Office, kind: phone, value: "+91 92430 80800", topic: admissions}
+- {id: admissions_2, label: Admissions Office, kind: phone, value: "+91 80 4012 9400", topic: admissions}
+- {id: email_general, label: General email, kind: email, value: mail@christuniversity.in, topic: general}
+- {id: email_admissions, label: Admissions email, kind: email, value: admissions@christuniversity.in, topic: admissions}
+- {id: library_site, label: Library website, kind: url, value: "https://library.christuniversity.in/christ_library/index.php", topic: library}
+- {id: knowledgepro, label: KnowledgePro (faculty and staff), kind: url, value: "https://kp.christuniversity.in/KnowledgePro/StudentLogin.do", topic: faculty}

@@ -1,0 +1,47 @@
+# Short verified answers. Only facts already in the knowledge base.
+- id: faq_coffee
+  question: Where can I get coffee or food?
+  answer: CCD is on the 8th floor. The Gourmet cafeteria is in the Basement.
+  place_ids: [ccd, gourmet]
+- id: faq_lost
+  question: Is there a lost and found?
+  answer: Lost and Found is in the Basement, next to the Health Centre.
+  place_ids: [lost_and_found]
+- id: faq_print
+  question: Where can I print or photocopy documents?
+  answer: The Xerox and Print Shop is in the Basement, next to the Stationery Shop.
+  place_ids: [xerox_shop, stationery_shop]
+- id: faq_medical
+  question: Where can I get first aid?
+  answer: The Health Centre is in the Basement.
+  place_ids: [health_centre]
+- id: faq_fees_payment
+  question: Where do I pay fees?
+  answer: The Accounts Office is on the Ground floor. For admission fee questions contact the Admissions Office.
+  place_ids: [accounts_office]
+- id: faq_admissions_where
+  question: Where is the admissions office?
+  answer: The Office of Admissions is on the Ground floor, near Reception. There is also an Office of Admissions in Room 110 on the 1st floor.
+  place_ids: [admissions_office, room_110]
+- id: faq_office_hours
+  question: What are the office timings?
+  answer: Offices are open Monday to Saturday, 9 am to 5 pm, with lunch from 1 pm to 2 pm. They are closed on the third Saturday, Sundays and public holidays.
+- id: faq_library_hours
+  question: What are the library timings?
+  answer: The library is open Monday to Saturday 8 am to 9 pm, third Saturday 9 am to 6 pm, Sunday 10 am to 6 pm, and 8 am to 5 pm during vacations. It is closed on public holidays.
+  place_ids: [library]
+- id: faq_faculty
+  question: How do I find a faculty member?
+  answer: Computer Science faculty sit in the Faculty Staff Room on the 8th floor. Staff details are on KnowledgePro.
+  place_ids: [faculty_staff_room]
+- id: faq_open_day
+  question: When is the open day?
+  answer: Daksh and Open Day is on 21 and 22 November 2026 at Central Campus.
+- id: faq_cs_floor
+  question: Which floor is the Computer Science department on?
+  answer: The Department of Computer Science is on the 8th floor. The MCA Lab is there too.
+  place_ids: [mca_lab]
+- id: faq_studios
+  question: Where are the media studios?
+  answer: Sky View Studio, Green View Studio and the Experiential Learning Media Lab are on the 10th floor.
+  place_ids: [sky_view_studio, green_view_studio, experiential_media_lab]
