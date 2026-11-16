@@ -60,3 +60,10 @@ def test_new_id_after_end() -> None:
     s.on_vision([VisionEvent("approach", 1)], present=True, t=0.0)
     s.on_vision([], present=False, t=40.0)
     assert s.id != first
+
+
+def test_new_visitor_starts_in_english() -> None:
+    s = KioskSession()
+    s.lang = "kn"
+    s.reset()
+    assert s.lang == "en"

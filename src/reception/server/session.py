@@ -25,6 +25,7 @@ class KioskSession:
     last_input: float = 0.0
     last_seen: float = 0.0
     previous_id: str | None = None
+    lang: str = "en"  # conversation language chosen by the visitor
 
     @property
     def active(self) -> bool:
@@ -43,6 +44,7 @@ class KioskSession:
         self.previous_id = self.id
         self.id = uuid.uuid4().hex[:12]
         self.ctx = SessionContext()
+        self.lang = "en"
         self.state = "idle"
         self.started_by = None
         self.started_at = None
