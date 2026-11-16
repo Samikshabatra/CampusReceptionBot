@@ -1,5 +1,5 @@
 // Camera + microphone for the kiosk. Frames and audio go to the server; nothing is stored.
-import { sendRaw, stopSpeaking } from "/static/app.js?v=8";
+import { sendRaw, stopSpeaking } from "/static/app.js?v=9";
 
 const body = document.body;
 const TARGET_RATE = 16000;
