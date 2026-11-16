@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Central Block Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/app.css?v=8">
+</head>
+<body data-state="idle" data-view="welcome">
+  <header class="topbar">
+    <div class="brand">
+      <img class="crest" src="/static/img/crest.jpg" alt="">
+      <div class="brand-words">
+        <span class="brand-name">CHRIST</span>
+        <span class="brand-small">(DEEMED TO BE UNIVERSITY)</span>
+        <span class="brand-small">BENGALURU</span>
+      </div>
+      <span class="brand-rule" aria-hidden="true"></span>
+      <div class="brand-app">
+        <span class="app-name">Central Block Assistant</span>
+        <span class="app-sub">AI Campus Concierge</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span class="status" id="status" role="status" aria-live="polite"><i class="status-icon" aria-hidden="true"></i><span id="status-text">Ready</span></span>
+      <time id="clock" class="clock"></time>
+      <button class="restart" id="new-visitor" type="button" title="Start over for a new visitor">Start over</button>
+    </div>
+  </header>
+
+  <div class="shell">
+    <nav class="sidebar" aria-label="Sections">
+      <button class="nav-item" data-go="chat" type="button"><i data-icon="chat"></i><span>Chat</span></button>
+      <button class="nav-item" data-go="navigate" type="button"><i data-icon="navigate"></i><span>Navigate</span></button>
+      <button class="nav-item" data-go="courses" type="button"><i data-icon="cap"></i><span>Courses</span></button>
+      <button class="nav-item" data-go="events" type="button"><i data-icon="calendar"></i><span>Events</span></button>
+      <button class="nav-item" data-go="contacts" type="button"><i data-icon="phone"></i><span>Contacts</span></button>
+      <button class="nav-item" data-go="help" type="button"><i data-icon="info"></i><span>Help</span></button>
+    </nav>
+
+    <main class="views">
+      <section class="view view-welcome" data-view="welcome" aria-label="Welcome">
+        <div class="welcome-photo" aria-hidden="true"></div>
+        <div class="welcome-body">
+          <h1>Welcome to<br>CHRIST University</h1>
+          <p class="welcome-sub">Your guide to the Central Block</p>
+          <div class="voice">
+            <span class="wave wave-left" aria-hidden="true"></span>
+            <button class="mic-big" data-mic type="button" aria-label="Tap and speak"><i data-icon="mic"></i></button>
+            <span class="wave wave-right" aria-hidden="true"></span>
+          </div>
+          <p class="mic-hint">Tap the microphone to talk</p>
+          <p class="welcome-lead">I'm your campus assistant.<br>Where would you like to go?</p>
+          <div class="tiles" id="tiles"></div>
+        </div>
+      </section>
+
+      <section class="view view-chat" data-view="chat" aria-label="Conversation">
+        <div class="chat-main">
+          <ol class="log" id="log" aria-live="polite"></ol>
+          <form class="askbar" id="ask">
+            <button class="mic-round" data-mic type="button" aria-label="Tap and speak"><i data-icon="mic"></i></button>
+            <label class="sr-only" for="ask-input">Type your question</label>
+            <input id="ask-input" autocomplete="off" placeholder="Type a question, or tap the mic to speak…" maxlength="300">
+            <button class="send" type="submit" aria-label="Send"><i data-icon="send"></i></button>
+          </form>
+        </div>
+        <aside class="quick" aria-label="Quick actions">
+          <h2>Quick Actions</h2>
+          <div id="quick"></div>
+        </aside>
+      </section>
+
+      <section class="view view-navigate" data-view="navigate" aria-label="Directions">
+        <header class="view-head">
+          <h1 id="nav-title">Find a place</h1>
+          <p id="nav-lead">Pick a place, or ask me. Directions start from Reception on the Ground floor.</p>
+        </header>
+        <div class="nav-grid">
+          <div class="card steps-card" id="nav-side"></div>
+          <div class="card map-card">
+            <div class="floor-picker" id="floor-picker" aria-label="Floors"></div>
+            <div class="map-frame" id="map-frame"></div>
+            <ul class="legend" aria-label="Map legend">
+              <li><i class="lg-pin"></i>Your location</li>
+              <li><i class="lg-route"></i>Route</li>
+              <li><i class="lg-dest"></i>Destination</li>
+              <li><i class="lg-lift">L</i>Lift</li>
+              <li><i class="lg-stairs"></i>Staircase</li>
+              <li><i class="lg-wc"></i>Washroom</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="view view-courses" data-view="courses" aria-label="Programmes">
+        <header class="view-head view-head--split">
+          <div>
+            <label class="sr-only" for="dept-select">Department</label>
+            <select id="dept-select" class="dept-select"></select>
+            <p id="course-count"></p>
+          </div>
+          <div class="search"><i data-icon="search"></i><label class="sr-only" for="course-search">Search a programme</label><input id="course-search" placeholder="Search a programme…"></div>
+        </header>
+        <div class="chips" id="level-chips" aria-label="Level"></div>
+        <div class="course-grid">
+          <ul class="course-list" id="course-list"></ul>
+          <article class="card course-detail" id="course-detail"></article>
+        </div>
+      </section>
+
+      <section class="view view-events" data-view="events" aria-label="Academic calendar">
+        <header class="view-head">
+          <h1>From the Academic Calendar</h1>
+          <p>Key upcoming events at CHRIST University, Central Campus.</p>
+        </header>
+        <div class="events-grid">
+          <ul class="event-list" id="event-list"></ul>
+          <div class="card cal-card">
+            <div class="cal-head">
+              <button type="button" class="cal-nav" id="cal-prev" aria-label="Previous month"><i data-icon="left"></i></button>
+              <h2 id="cal-title"></h2>
+              <button type="button" class="cal-nav" id="cal-next" aria-label="Next month"><i data-icon="right"></i></button>
+            </div>
+            <div class="cal-grid" id="cal-grid"></div>
+            <ul class="cal-legend"><li><i class="dot dot-event"></i>Event day</li><li><i class="dot dot-multi"></i>Multi-day event</li><li><i class="dot dot-holiday"></i>Holiday</li></ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="view view-contacts" data-view="contacts" aria-label="Contacts">
+        <header class="view-head">
+          <h1>Contacts</h1>
+          <p>Key numbers, email addresses and links. Scan a code to save it on your phone.</p>
+        </header>
+        <div class="contact-grid" id="contact-grid"></div>
+      </section>
+
+      <section class="view view-help" data-view="help" aria-label="Help">
+        <header class="view-head">
+          <h1>How to use this assistant</h1>
+          <p>Speak, type, or tap. I only answer from verified Central Block information.</p>
+        </header>
+        <div class="help-grid">
+          <div class="card help-card"><i data-icon="mic"></i><h2>Speak</h2><p>Stand in front of the screen and ask your question after the greeting. The microphone turns red while I listen.</p></div>
+          <div class="card help-card"><i data-icon="chat"></i><h2>Type or tap</h2><p>Use the box at the bottom of Chat, or the buttons on each page.</p></div>
+          <div class="card help-card"><i data-icon="navigate"></i><h2>Directions</h2><p>Routes start at Reception on the Ground floor and show each floor you pass through.</p></div>
+          <div class="card help-card"><i data-icon="users"></i><h2>Need a person?</h2><p>Say "talk to a person". Anything I can't confirm goes to the reception desk.</p></div>
+          <div class="card help-card help-wide"><i data-icon="info"></i><h2>Your privacy</h2><p>The camera only notices that someone is in front of the kiosk. Faces are not recognised and no images or recordings are kept. Questions are logged without phone numbers or emails.</p></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <button class="mic-fab" data-mic type="button" aria-label="Microphone off. Tap to speak"><i data-icon="mic"></i><span class="mic-label">Tap to speak</span></button>
+  <div class="banner" id="banner" hidden>Someone else is being helped. I'll be with you in a moment.</div>
+  <video id="camera" muted playsinline hidden></video>
+  <script src="/static/app.js?v=8" type="module"></script>
+  <script src="/static/av.js?v=8" type="module"></script>
+</body>
+</html>
