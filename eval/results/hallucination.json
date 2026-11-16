@@ -1,0 +1,97 @@
+{
+ "n_unanswerable": 40,
+ "refusal_rate": 0.9,
+ "hallucination_rate": 0.0,
+ "answered_instead_of_refusing": [
+  {
+   "q": "is there a dental course here",
+   "refused": false,
+   "intent": "course_list",
+   "speech": "Central Campus offers 153 programmes. They're listed on screen.",
+   "unsupported": []
+  },
+  {
+   "q": "what is the mca fee for 2030",
+   "refused": false,
+   "intent": "course_fees",
+   "speech": "Master of Computer Applications (MCA), year 1 fee: 2 lakh 42 thousand rupees for Karnataka and 2 lakh 62 thousand rupees for other states, for academic year 2027, as published.",
+   "unsupported": []
+  },
+  {
+   "q": "what is the phone number of room 806",
+   "refused": false,
+   "intent": "contact",
+   "speech": "You can call General and Customer Support on plus 9 1, 8 0, 4 0 1 2, 9 1 0 0. All numbers and emails are on screen.",
+   "unsupported": []
+  },
+  {
+   "q": "does the library have the book clean code",
+   "refused": false,
+   "intent": "library",
+   "speech": "The Library is open now. Today's hours are 8 am to 9 pm. The library website is on screen.",
+   "unsupported": []
+  }
+ ],
+ "llm": {
+  "n_questions": 20,
+  "drafts_checked": 19,
+  "raw_draft_unsupported_rate": 0.21052631578947367,
+  "final_unsupported_rate": 0.0,
+  "answered_rate": 0.75,
+  "examples": [
+   {
+    "q": "what is the Master of Science Strategic Management (Interdisciplinary Masters Programme) programme about",
+    "drafts": [
+     "The Master of Science Strategic Management (Interdisciplinary Masters Programme) is designed to provide opportunity for skill upgradation through higher education focused on strategic thinking and management for working/aspiring professionals. [course:240:1]"
+    ],
+    "draft_ok": [
+     true
+    ],
+    "final_answered": true,
+    "reason": null
+   },
+   {
+    "q": "what will I study in Master of Law (LLM) Intellectual Property and Trade Law",
+    "drafts": [
+     "NOT_FOUND"
+    ],
+    "draft_ok": [],
+    "final_answered": false,
+    "reason": "not_found"
+   },
+   {
+    "q": "career options after Master of Science Computer Science and Applications",
+    "drafts": [
+     "Graduates of MSc (Computer Science and Applications) have a wide range of career options, including working in academia or industry. They can conduct research and teach at universities or develop new technologies and solve complex problems for companies. [course:54:1]"
+    ],
+    "draft_ok": [
+     true
+    ],
+    "final_answered": true,
+    "reason": null
+   },
+   {
+    "q": "describe the Doctor of Philosophy (PhD) in Political Science course",
+    "drafts": [
+     "The PhD program in Political Science is a doctorate-level program that aims to groom students into well-rounded research scholars. It's an inter and multi-disciplinary program that welcomes research initiatives on various dimensions of Political Science, including political theory and government. [course:471:0]"
+    ],
+    "draft_ok": [
+     true
+    ],
+    "final_answered": true,
+    "reason": null
+   },
+   {
+    "q": "what are the highlights of Master of Science Statistics",
+    "drafts": [
+     "The discipline studies randomness, variation, and the interplay between application, computation, and theory, rendering a good combination of pure and applied statistics with software skills for successful participation in professional life. [course:452:0]"
+    ],
+    "draft_ok": [
+     true
+    ],
+    "final_answered": true,
+    "reason": null
+   }
+  ]
+ }
+}

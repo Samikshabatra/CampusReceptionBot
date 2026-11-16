@@ -1,0 +1,15 @@
+{
+ "n": 120,
+ "precision": 1.0,
+ "recall": 1.0,
+ "f1": 1.0,
+ "greet_rate_by_kind": {
+  "far": 0.0,
+  "linger": 1.0,
+  "off_centre": 0.0,
+  "approach": 1.0,
+  "walk_past": 0.0,
+  "group": 1.0
+ },
+ "note": "synthetic sequences; record real clips for the final report"
+}

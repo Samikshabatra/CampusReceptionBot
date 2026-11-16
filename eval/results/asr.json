@@ -1,0 +1,27 @@
+{
+ "n": 40,
+ "wer": 0.05357142857142857,
+ "stt_ms": {
+  "avg": 998.700372496387,
+  "p95": 1093.24736505514
+ },
+ "examples": [
+  {
+   "ref": "where is room eight zero six",
+   "hyp": "Where is room 806?"
+  },
+  {
+   "ref": "where is room eight one two",
+   "hyp": "Where is room 812?"
+  },
+  {
+   "ref": "where is room eight zero six",
+   "hyp": "Where is room 806?"
+  },
+  {
+   "ref": "where is room eight one two",
+   "hyp": "Where is room 812?"
+  }
+ ],
+ "source": "data\\eval\\asr_synthetic"
+}
