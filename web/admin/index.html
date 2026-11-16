@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kiosk Dashboard</title>
+  <style>
+    :root { --navy:#14295a; --sign:#ffd23f; --paper:#f5f7fb; --ink:#1a2133; --slate:#5a6479; --line:#d9dfeb; --bad:#b42318; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:"Segoe UI",system-ui,sans-serif; color:var(--ink); background:var(--paper); }
+    header { background:var(--navy); color:#fff; padding:1rem 1.5rem; display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap; }
+    header h1 { margin:0; font-size:1.4rem; }
+    main { padding:1.5rem; display:grid; gap:1.2rem; grid-template-columns:repeat(auto-fit,minmax(min(100%,22rem),1fr)); }
+    section { background:#fff; border:1px solid var(--line); border-radius:14px; padding:1rem 1.2rem; }
+    h2 { margin:0 0 .8rem; font-size:1.1rem; color:var(--navy); }
+    .stats { grid-column:1/-1; display:flex; flex-wrap:wrap; gap:1rem; }
+    .stat { background:#fff; border:1px solid var(--line); border-radius:14px; padding:.8rem 1.2rem; min-width:10rem; }
+    .stat b { display:block; font-size:1.8rem; color:var(--navy); }
+    .bar { display:grid; grid-template-columns:minmax(6rem,40%) 1fr 2.5rem; align-items:center; gap:.5rem; margin:.3rem 0; font-size:.95rem; }
+    .bar span:first-child { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .bar i { display:block; height:.8rem; background:var(--navy); border-radius:4px; }
+    .bar em { font-style:normal; text-align:right; color:var(--slate); }
+    table { width:100%; border-collapse:collapse; font-size:.92rem; }
+    td { border-bottom:1px solid var(--line); padding:.35rem .2rem; vertical-align:top; }
+    td.reason { color:var(--bad); white-space:nowrap; }
+    form, .actions { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
+    input, select, button { font:inherit; padding:.45rem .8rem; border-radius:8px; border:1px solid var(--line); }
+    button { background:var(--sign); border-color:var(--sign); font-weight:700; cursor:pointer; }
+    #msg { color:#fff; }
+    .empty { color:var(--slate); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Kiosk Dashboard</h1>
+    <form id="login">
+      <label for="pin">Admin PIN</label>
+      <input id="pin" type="password" inputmode="numeric" autocomplete="off">
+      <select id="days" aria-label="Period"><option value="1">Today</option><option value="7" selected>Last 7 days</option><option value="30">Last 30 days</option></select>
+      <button type="submit">Show</button>
+    </form>
+    <div class="actions">
+      <button type="button" id="export">Download CSV</button>
+      <button type="button" id="reload">Reload knowledge</button>
+      <span id="msg" role="status"></span>
+    </div>
+  </header>
+  <main id="main"><p class="empty">Enter the admin PIN to see visitor analytics.</p></main>
+<script>
+const $ = (s) => document.querySelector(s);
+let pin = sessionStorage.getItem("pin") || "";
+const h = (tag, text, cls) => { const e = document.createElement(tag); if (text !== undefined) e.textContent = text; if (cls) e.className = cls; return e; };
+async function api(path, opts = {}) {
+  const r = await fetch(path, { ...opts, headers: { "X-Admin-Pin": pin } });
+  if (r.status === 401) { $("#msg").textContent = "Wrong PIN."; throw new Error("pin"); }
+  return r;
+}
+function bars(title, items, label, value = "count") {
+  const s = h("section"); s.append(h("h2", title));
+  if (!items.length) { s.append(h("p", "Nothing yet.", "empty")); return s; }
+  const max = Math.max(...items.map((i) => i[value]));
+  for (const it of items) {
+    const row = h("div", undefined, "bar");
+    const bar = h("i"); bar.style.width = `${(100 * it[value]) / max}%`;
+    row.append(h("span", it[label]), h("span"), h("em", String(it[value])));
+    row.children[1].append(bar); s.append(row);
+  }
+  return s;
+}
+function table(title, items) {
+  const s = h("section"); s.append(h("h2", title));
+  if (!items.length) { s.append(h("p", "None.", "empty")); return s; }
+  const t = h("table");
+  for (const it of items.slice().reverse()) { const tr = h("tr"); tr.append(h("td", it.text || "(empty)"), h("td", it.reason, "reason")); t.append(tr); }
+  s.append(t); return s;
+}
+async function load() {
+  const s = await (await api(`/api/admin/summary?days=${$("#days").value}`)).json();
+  $("#msg").textContent = "";
+  const stats = h("div", undefined, "stats");
+  const stat = (n, l) => { const d = h("div", undefined, "stat"); d.append(h("b", n), h("span", l)); stats.append(d); };
+  stat(s.sessions, "visitor sessions"); stat(s.turns, "questions");
+  stat(`${(s.latency_ms.avg / 1000).toFixed(2)} s`, "average response time");
+  stat(`${(s.latency_ms.p95 / 1000).toFixed(2)} s`, "95th percentile response");
+  stat(`${Math.round(s.avg_session_s)} s`, "average interaction");
+  stat(s.handover_queries.length, "handed to reception");
+  const hours = Object.entries(s.by_hour).sort((a, b) => a[0] - b[0]).map(([k, v]) => ({ hour: `${k}:00`, count: v }));
+  const modes = Object.entries(s.by_mode).map(([k, v]) => ({ mode: k, count: v }));
+  $("#main").replaceChildren(stats,
+    bars("Most common questions", s.top_queries, "text"),
+    bars("Most requested places", s.top_locations, "place_id"),
+    bars("Question types", s.top_intents, "intent"),
+    table("Failed questions", s.failed_queries),
+    table("Needed a person", s.handover_queries),
+    bars("Busy hours", hours, "hour"),
+    bars("How visitors asked", modes, "mode"));
+}
+$("#login").addEventListener("submit", (e) => { e.preventDefault(); pin = $("#pin").value || pin; sessionStorage.setItem("pin", pin); load().catch(() => {}); });
+$("#export").addEventListener("click", async () => {
+  const blob = await (await api("/api/admin/export.csv")).blob();
+  const a = h("a"); a.href = URL.createObjectURL(blob); a.download = "kiosk-interactions.csv"; a.click();
+});
+$("#reload").addEventListener("click", async () => {
+  $("#msg").textContent = "Reloading…";
+  const r = await api("/api/admin/reload", { method: "POST" });
+  const body = await r.json();
+  $("#msg").textContent = body.ok ? `Reloaded: ${body.places} places, ${body.courses} courses.` : `Not reloaded. ${body.errors}`;
+});
+if (pin) load().catch(() => {});
+</script>
+</body>
+</html>
