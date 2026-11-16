@@ -103,6 +103,7 @@ function connect() {
     const msg = JSON.parse(ev.data);
     if (msg.type === "response") showResponse(msg.data);
     else if (msg.type === "transcript") { if (msg.text) addVisitor(msg.text); }
+    else if (msg.type === "noise") showNoiseHint();
     else if (msg.type === "banner") showBanner(msg.seconds);
     else if (msg.type === "session_end") resetVisitor(false);
     else if (msg.type === "presence") { body.dataset.presence = msg.present ? "yes" : "no"; setState(body.dataset.state); }
@@ -145,9 +146,18 @@ function pickVoice() {
 speechSynthesis.onvoiceschanged = pickVoice;
 pickVoice();
 let speechSeq = 0;
+let currentAudio = null;
+// Stop talking immediately (the visitor interrupted by tapping the mic or typing).
+export function stopSpeaking() {
+  speechSeq++;
+  speechSynthesis.cancel();
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  body.dataset.speaking = "no";
+}
 function speak(text, onEnd) {
   const mine = ++speechSeq;
   speechSynthesis.cancel();
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
   const u = new SpeechSynthesisUtterance(text);
   if (voice) u.voice = voice;
   u.rate = 0.98;
@@ -516,6 +526,10 @@ async function loadContacts() {
 }
 
 // ---------------------------------------------------------------- banner, clock, boot
+function showNoiseHint() {
+  addKiosk("I only heard background noise. Tap the microphone and speak a little closer.", null);
+  setState("idle");
+}
 function showBanner(seconds) {
   const b = $("#banner");
   b.hidden = false;
@@ -531,6 +545,7 @@ function boot() {
   const quick = [["pin", "Get Directions", "navigate"], ["cap", "Programmes & Fees", "courses"], ["calendar", "Academic Calendar", "events"], ["phone", "Important Contacts", "contacts"]];
   $("#quick").replaceChildren(...quick.map(([i, label, view]) => el("button", { class: "qa", type: "button", onclick: () => setView(view) }, iconNode(i), el("span", {}, label), iconNode("right"))));
   for (const b of $$(".nav-item")) b.addEventListener("click", () => setView(b.dataset.go));
+  $("#ask-input").addEventListener("input", () => { if (body.dataset.speaking === "yes") stopSpeaking(); });
   $("#ask").addEventListener("submit", (e) => { e.preventDefault(); const i = $("#ask-input"); ask(i.value); i.value = ""; });
   $("#new-visitor").addEventListener("click", () => resetVisitor(true));
   window.addEventListener("kiosk:mic", (e) => {
