@@ -1,0 +1,55 @@
+# Academic Calendar 2026-27 (Central Campus and all-campus items only).
+valid_from: 2026-06-01
+valid_until: 2027-06-01
+note: Holidays are subject to change based on official notifications issued by the Government of Karnataka.
+holidays:
+  - {date: 2026-06-26, name: Last Day of Muharram}
+  - {date: 2026-08-15, name: Independence Day}
+  - {date: 2026-08-26, name: Eid-Milad}
+  - {date: 2026-09-14, name: Ganesh Chaturthi}
+  - {date: 2026-10-02, name: Gandhi Jayanthi}
+  - {date: 2026-10-10, name: Mahalaya Amavasye}
+  - {date: 2026-10-20, name: Mahanavami / Ayudhapooja}
+  - {date: 2026-10-21, name: Vijayadasami}
+  - {date: 2026-10-26, name: Maharshi Valmiki Jayanthi}
+  - {date: 2026-11-01, name: Kannada Rajyothsava}
+  - {date: 2026-11-08, name: Naraka Chaturdashi}
+  - {date: 2026-11-10, name: Balipadyami / Deepavali}
+  - {date: 2026-11-27, name: Kanakadasa Jayanthi}
+  - {date: 2026-11-28, name: Compensatory holiday for Third Saturday (21 November)}
+  - {date: 2026-12-25, name: Christmas, assumed: true}
+  - {date: 2027-01-14, name: Makara Sankranti}
+  - {date: 2027-01-26, name: Republic Day}
+  - {date: 2027-03-06, name: Maha Shivaratri}
+  - {date: 2027-03-10, name: Idul Fitr}
+  - {date: 2027-03-26, name: Good Friday}
+  - {date: 2027-04-08, name: Ugadi}
+  - {date: 2027-04-14, name: Dr Ambedkar Jayanthi}
+  - {date: 2027-04-19, name: Mahavir Jayanthi}
+  - {date: 2027-05-01, name: May Day}
+  - {date: 2027-05-09, name: Basava Jayanthi}
+  - {date: 2027-05-17, name: Bakrid}
+working_saturdays: [2026-10-17, 2026-11-21, 2026-12-19]
+vacations:   # ASSUMPTION (spec §15 item 11): library vacation hours apply here
+  - {name: Christmas vacation, start: 2026-12-23, end: 2027-01-03}
+  - {name: Summer vacation, start: 2027-04-17, end: 2027-05-31}
+events:
+  - {name: Daksh & Open Day, start: 2026-11-21, end: 2026-11-22, kind: open_day}
+  - {name: Blossoms Inauguration, start: 2026-11-12, end: 2026-11-12, kind: fest}
+  - {name: Annual Athletic Meet, start: 2026-12-04, end: 2026-12-05, kind: fest}
+  - {name: Magnificat, start: 2026-12-05, end: 2026-12-06, kind: fest}
+  - {name: Christmas Holy Mass, start: 2026-12-09, end: 2026-12-09, kind: ceremony}
+  - {name: Admission Interviews (Session I), start: 2026-12-11, end: 2026-12-13, kind: admissions}
+  - {name: Founder's Day, start: 2027-01-03, end: 2027-01-03, kind: ceremony}
+  - {name: "In-Bloom & Blossoms, Theatre Festival, National Quiz Championship", start: 2027-01-21, end: 2027-01-23, kind: fest}
+  - {name: CHRI-SPO Fest, start: 2027-02-01, end: 2027-02-06, kind: fest}
+  - {name: Sound Curry, start: 2027-02-19, end: 2027-02-19, kind: fest}
+  - {name: Nritta, start: 2027-02-27, end: 2027-02-28, kind: fest}
+  - {name: Open Forum - Student Council, start: 2027-03-01, end: 2027-03-01, kind: other}
+  - {name: Gratitude Day, start: 2027-03-02, end: 2027-03-02, kind: ceremony}
+  - {name: Investiture Ceremony - Student Council, start: 2027-03-03, end: 2027-03-03, kind: ceremony}
+  - {name: End Semester Examinations (even semester), start: 2027-03-09, end: 2027-03-24, kind: exam}
+  - {name: Admission Interviews (Session II), start: 2027-04-09, end: 2027-04-14, kind: admissions}
+  - {name: Admission Interviews (Session III), start: 2027-05-13, end: 2027-05-15, kind: admissions}
+  - {name: Convocation, start: 2027-05-27, end: 2027-05-29, kind: ceremony}
+  - {name: Reopening for Academic Year 2027-28 (senior students), start: 2027-06-01, end: 2027-06-01, kind: other}
