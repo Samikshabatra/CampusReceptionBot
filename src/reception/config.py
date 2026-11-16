@@ -71,6 +71,27 @@ class AnalyticsConfig(BaseModel):
     admin_pin: str = "2027"
 
 
+class I18nConfig(BaseModel):
+    """Languages and the offline translator."""
+
+    languages: list[str] = ["en", "hi", "kn"]
+    model_dir: Path = Path("models/nllb-600m-ct2-int8")
+    beam_size: int = 2
+    max_tokens: int = 256
+
+
+class TtsConfig(BaseModel):
+    """Spoken replies via Microsoft neural voices (edge-tts); browser voice is the fallback."""
+
+    enabled: bool = True
+    voices: dict[str, str] = {
+        "en": "en-IN-NeerjaNeural",
+        "hi": "hi-IN-SwaraNeural",
+        "kn": "kn-IN-SapnaNeural",
+    }
+    timeout_s: float = 8.0
+
+
 class AppConfig(BaseModel):
     """All tunable settings. Nothing tunable is hard-coded elsewhere."""
 
@@ -78,6 +99,8 @@ class AppConfig(BaseModel):
     speech: SpeechConfig = SpeechConfig()
     kiosk: KioskConfig = KioskConfig()
     analytics: AnalyticsConfig = AnalyticsConfig()
+    i18n: I18nConfig = I18nConfig()
+    tts: TtsConfig = TtsConfig()
 
     timezone: str = "Asia/Kolkata"
     knowledge_dir: Path = Path("knowledge")
