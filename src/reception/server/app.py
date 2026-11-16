@@ -15,14 +15,19 @@ from zoneinfo import ZoneInfo
 
 import numpy as np
 from fastapi import FastAPI, Header, HTTPException, WebSocket, WebSocketDisconnect
-from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse
+from fastapi.responses import (
+    FileResponse,
+    JSONResponse,
+    PlainTextResponse,
+    Response as HttpResponse,
+)
 from fastapi.staticfiles import StaticFiles
 from starlette.concurrency import run_in_threadpool
 
 from reception.analytics.hook import AnalyticsHook
 from reception.analytics.store import AnalyticsStore
 from reception.app_factory import build_assistant
-from reception.config import AppConfig, I18nConfig, SpeechConfig, VisionConfig
+from reception.config import AppConfig, I18nConfig, SpeechConfig, TtsConfig, VisionConfig
 from reception.dialogue.router import Assistant
 from reception.i18n.localize import as_lang, localize_response, to_english
 from reception.i18n.translate import NllbTranslator, Translator
@@ -30,6 +35,7 @@ from reception.kb.loader import KnowledgeError
 from reception.server.browse import browse_router
 from reception.server.session import KioskSession
 from reception.speech.stt import Transcriber, Transcript, decode_pcm
+from reception.speech.tts import TtsUnavailable, VoiceService
 from reception.types import Response
 from reception.ui.present import present
 from reception.vision.approach import ApproachDetector, Box
@@ -71,6 +77,7 @@ class AppState:
     detector: Detector
     transcriber: STT
     translator: Translator
+    voice: VoiceService
     hooks: list[Callable[..., None]]
     store: AnalyticsStore
 
@@ -80,6 +87,7 @@ def create_app(
     detector_factory: Callable[[VisionConfig], Detector] = FaceDetector,
     transcriber_factory: Callable[[SpeechConfig], STT] = Transcriber,
     translator_factory: Callable[[I18nConfig], Translator] = NllbTranslator,
+    voice_factory: Callable[[TtsConfig], VoiceService] = VoiceService,
 ) -> FastAPI:
     """Build the FastAPI app.
 
@@ -88,6 +96,7 @@ def create_app(
         detector_factory: Face detector from vision config.
         transcriber_factory: Speech-to-text from speech config.
         translator_factory: Hindi/Kannada translator from i18n config.
+        voice_factory: Text-to-speech for Hindi/Kannada answers.
 
     Returns:
         The app (``app.state.kiosk`` holds the live components).
@@ -101,6 +110,7 @@ def create_app(
         state.detector = detector_factory(state.assistant.cfg.vision)
         state.transcriber = transcriber_factory(state.assistant.cfg.speech)
         state.translator = translator_factory(state.assistant.cfg.i18n)
+        state.voice = voice_factory(state.assistant.cfg.tts)
         cfg = state.assistant.cfg
         state.store = AnalyticsStore(cfg.analytics.db_path)
         state.hooks.append(AnalyticsHook(state.store, cfg.timezone))
@@ -164,6 +174,19 @@ def create_app(
     async def health() -> dict[str, Any]:
         kb = state.assistant.kb
         return {"ok": True, "places": len(kb.places), "courses": len(kb.courses)}
+
+    @app.get("/api/tts")
+    async def tts(text: str, lang: str = "en") -> HttpResponse:
+        # Reads an answer aloud in the visitor's language; 503 means "use the browser voice".
+        if not text.strip() or len(text) > 1500:
+            raise HTTPException(status_code=400, detail="text must be 1-1500 characters")
+        try:
+            audio = await state.voice.speak(text.strip(), lang)
+        except TtsUnavailable as e:
+            raise HTTPException(status_code=503, detail=f"voice unavailable: {e}") from e
+        return HttpResponse(
+            audio, media_type="audio/mpeg", headers={"Cache-Control": "max-age=3600"}
+        )
 
     @app.get("/api/config")
     async def client_config() -> dict[str, Any]:

@@ -138,3 +138,28 @@ def test_broken_translator_still_answers_in_english(assistant: Assistant) -> Non
         assert until(ws, "response")["data"]["intent"] == "greeting"
         ws.send_json({"type": "ask", "text": "where is the library", "t": 2.0})
         assert until(ws, "response")["data"]["card"]["data"]["targets"] == ["library"]
+
+
+class FakeVoice:
+    async def speak(self, text: str, lang: str) -> bytes:
+        from reception.speech.tts import TtsUnavailable
+
+        if lang == "fr":
+            raise TtsUnavailable("no voice")
+        return f"{lang}:{text}".encode()
+
+
+def test_tts_endpoint(assistant: Assistant) -> None:
+    app = create_app(
+        lambda: assistant,
+        detector_factory=lambda c: NoFace(),
+        transcriber_factory=lambda c: HindiSTT(),
+        translator_factory=lambda c: FakeTranslator(),  # type: ignore[arg-type,return-value]
+        voice_factory=lambda c: FakeVoice(),  # type: ignore[arg-type,return-value]
+    )
+    with TestClient(app) as c:
+        r = c.get("/api/tts", params={"text": "नमस्ते", "lang": "hi"})
+        assert r.status_code == 200 and r.headers["content-type"] == "audio/mpeg"
+        assert r.content == "hi:नमस्ते".encode()
+        assert c.get("/api/tts", params={"text": "hi", "lang": "fr"}).status_code == 503
+        assert c.get("/api/tts", params={"text": " ", "lang": "hi"}).status_code == 400
