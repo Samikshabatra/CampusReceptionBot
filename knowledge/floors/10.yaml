@@ -1,0 +1,18 @@
+# Floor 10 layout, transcribed from the FINAL map (2026-11-04).
+# Rows of cells (map order); span = relative width/height; gap = blank.
+floor: "10"
+title: "Department of Media Studies"
+seating: true
+rows:
+  - box: [0, 0, 14, 60]
+    direction: vertical
+    cells: [{"id": "experiential_media_lab", "span": 2}, "1006", "1007", "1008", "1009", "gap"]
+  - box: [14, 0, 86, 10]
+    direction: horizontal
+    cells: ["gap", "1004", "1003", "1002", "1001", "wd"]
+  - box: [86, 0, 100, 60]
+    direction: vertical
+    cells: [{"id": "1000", "span": 3}, {"id": "washroom", "span": 2}, "gap"]
+  - box: [14, 50, 86, 60]
+    direction: horizontal
+    cells: ["sky_view_studio", "green_view_studio"]

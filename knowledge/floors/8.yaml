@@ -1,0 +1,18 @@
+# Floor 8 layout, transcribed from data/raw/central_block_map.webp.
+# Rows of cells (map order); span = relative width/height; gap = blank.
+floor: "8"
+title: "Department of Computer Science"
+seating: true
+rows:
+  - box: [0, 0, 14, 60]
+    direction: vertical
+    cells: ["fw", "wd", "ld", {"id": "ccd", "span": 2}]
+  - box: [14, 0, 86, 10]
+    direction: horizontal
+    cells: [{"id": "faculty_staff_room", "span": 4}, "gw", "wd"]
+  - box: [86, 0, 100, 60]
+    direction: vertical
+    cells: ["815", "814", "lw", "813", "812", "mca_lab"]
+  - box: [14, 50, 86, 60]
+    direction: horizontal
+    cells: ["808", "809", "810", "gw", "lw"]
