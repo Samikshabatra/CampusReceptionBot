@@ -1,0 +1,20 @@
+# Floor 3 layout, transcribed from data/raw/central_block_map.webp.
+# Rows of cells (map order); span = relative width/height; gap = blank.
+floor: "3"
+title: "School of Business and Management – MBA"
+seating: false
+rows:
+  - box: [0, 0, 14, 60]
+    direction: vertical
+    cells: ["301", "302", "303", "staircase", "304", "305"]
+  - box: [14, 0, 86, 10]
+    direction: horizontal
+    cells: ["gap", "lsw", "gsw", "319", "318", "317", "316", "gw", "wd"]
+  - box: [86, 0, 100, 60]
+    direction: vertical
+    cells: ["315", "314", "lt", "313", "312", "311"]
+  - box: [14, 50, 86, 60]
+    direction: horizontal
+    cells: ["lockers", "306", "307", "308", "309", "310", "gw", "lw", "lockers"]
+extras:
+  - {id: faculty_rooms_3, box: [20, 17, 33, 43]}
