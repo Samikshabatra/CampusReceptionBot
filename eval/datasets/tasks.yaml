@@ -1,0 +1,22 @@
+# Scripted multi-turn visitor tasks. Success = the final answer has the expected intent
+# and contains every fact. `at` fixes the clock (default 2026-11-04 10:00 IST).
+- {name: Xerox location then hours, turns: [where is the xerox shop, what are its timings], intent: facility_hours, facts: [confirm at reception]}
+- {name: MCA fee then NRI follow-up, turns: [MCA fees, "and for NRI?"], intent: course_fees, facts: [NRI]}
+- {name: Course then its fee, turns: [tell me about mca, how much is it], intent: course_fees, facts: [2 lakh 42 thousand rupees]}
+- {name: Library route then open now, turns: [where is the library, is it open now], intent: facility_hours, facts: [open now]}
+- {name: Greeting then room, turns: [hi, where is room 812], intent: navigate, facts: [8th floor]}
+- {name: Room not on map, turns: [where is room 806], intent: navigate, facts: ["couldn't find"]}
+- {name: Open day date, turns: [when is the open day], intent: events, facts: [21 November]}
+- {name: Ambiguous course resolved, turns: [fees for msc ai and ml, one year msc ai and ml fees], intent: course_fees, facts: [2 lakh 45 thousand rupees]}
+- {name: How to apply, turns: [how do I apply for admission], intent: admissions, facts: [11 December]}
+- {name: Feeling unwell, turns: [I feel unwell], intent: urgent, facts: [Health Centre]}
+- {name: Admissions office, turns: [where is the admissions office], intent: navigate, facts: [this floor]}
+- {name: BCA fee then OCI, turns: [bca fees, what about oci students], intent: course_fees, facts: [US dollars]}
+- {name: Health centre by stairs, turns: [where is the health centre, how do I get there by stairs], intent: navigate, facts: [stairs]}
+- {name: List then course, turns: [what courses are in computer science, tell me about bca], intent: course_info, facts: [undergraduate]}
+- {name: College open on third Saturday, turns: [is the college open today], at: "2027-01-16 10:00", intent: college_open, facts: [library is open]}
+- {name: Find a professor, turns: [where is professor rao], intent: faculty, facts: [KnowledgePro]}
+- {name: Reception number, turns: [what is the reception phone number], intent: contact, facts: [plus 9 1]}
+- {name: Canteen then stationery, turns: [where is the canteen, and the stationery shop], intent: navigate, facts: [Basement, Stationery]}
+- {name: Library website, turns: [library website], intent: library, facts: [library.christuniversity.in]}
+- {name: Print documents, turns: [where can I print documents], intent: navigate, facts: [Basement]}

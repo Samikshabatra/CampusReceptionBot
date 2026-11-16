@@ -1,0 +1,62 @@
+# Answerable questions: expected intent + facts that must appear in the answer
+# (speech, card data or links). `at` fixes the clock (default 2026-11-04 10:00 IST).
+- {q: where is the xerox shop, intent: navigate, facts: [Basement, Stationery Shop]}
+- {q: where is room 812, intent: navigate, facts: [8th floor]}
+- {q: how do I get to the library, intent: navigate, facts: [6th floor]}
+- {q: where is the health centre, intent: navigate, facts: [Basement]}
+- {q: where can I get coffee, intent: navigate, facts: [CCD, 8th floor]}
+- {q: where is the accounts office, intent: navigate, facts: [this floor]}
+- {q: where is the department of law, intent: navigate, facts: [4th floor]}
+- {q: where is room 1004, intent: navigate, facts: [10th floor]}
+- {q: where is the mca lab, intent: navigate, facts: [8th floor]}
+- {q: where is reception, intent: navigate, facts: [this floor]}
+- {q: where is the canteen, intent: navigate, facts: [Basement]}
+- {q: where is the admissions office, intent: navigate, facts: [this floor, Room 110]}
+- {q: where is room 806, intent: navigate, facts: ["couldn't find Room 806"]}
+- {q: where is the commerce department, intent: navigate, facts: ["isn't in Central Block"]}
+- {q: where is the nearest washroom, intent: navigate, facts: [2nd floor]}
+- {q: where is sky view studio, intent: navigate, facts: [10th floor]}
+- {q: where is the department of social work, intent: navigate, facts: [6th floor]}
+- {q: where is room 215, intent: navigate, facts: [2nd floor]}
+- {q: where is the psychology department, intent: navigate, facts: [7th floor]}
+- {q: where is lost and found, intent: navigate, facts: [Basement]}
+- {q: is the library open now, intent: facility_hours, at: "2026-11-15 11:00", facts: [open now, 10 am to 6 pm]}
+- {q: what are the office timings, intent: facility_hours, facts: [9 am to 5 pm]}
+- {q: is the accounts office open, intent: facility_hours, at: "2026-11-10 11:00", facts: [closed, Deepavali]}
+- {q: library timings, intent: facility_hours, at: "2027-01-16 10:00", facts: [9 am to 6 pm]}
+- {q: is the reception open, intent: facility_hours, at: "2026-11-04 13:30", facts: [lunch]}
+- {q: is the college open today, intent: college_open, at: "2027-01-16 10:00", facts: [Offices are closed, library is open]}
+- {q: when does the xerox shop close, intent: facility_hours, facts: [5 pm, confirm at reception]}
+- {q: library timings, intent: facility_hours, at: "2026-12-27 11:00", facts: [8 am to 5 pm]}
+- {q: mca fees, intent: course_fees, facts: [2 lakh 42 thousand rupees]}
+- {q: bca fees, intent: course_fees, facts: [1 lakh 81 thousand rupees]}
+- {q: what is the fee for mca for nri students, intent: course_fees, facts: [NRI, 3 lakh 42 thousand rupees]}
+- {q: mca second year fee, intent: course_fees, facts: [year 2]}
+- {q: msc ai and ml one year fees, intent: course_fees, facts: [2 lakh 45 thousand rupees]}
+- {q: tell me about mca, intent: course_info, facts: [postgraduate, 2 years, 8th floor]}
+- {q: how long is bca, intent: course_info, facts: [4 years]}
+- {q: tell me about the bcom accountancy and taxation course, intent: course_info, facts: ["isn't in Central Block"]}
+- {q: which courses are available in computer science, intent: course_list, facts: ["9"]}
+- {q: list of pg courses in computer science, intent: course_list, facts: [4 postgraduate]}
+- {q: mca fees for oci students, intent: course_fees, facts: [3,625 US dollars]}
+- {q: what is the registration fee for mca, intent: course_fees, facts: [Not listed]}
+- {q: tell me about phd in computer science, intent: course_info, facts: [doctoral]}
+- {q: fees for msc computer science, intent: course_fees, facts: [1 lakh rupees]}
+- {q: how do I apply for admission, intent: admissions, facts: [9 2 4 3 0, 11 December]}
+- {q: what is the reception phone number, intent: contact, facts: ["plus 9 1, 8 0, 4 0 1 2, 9 1 0 0"]}
+- {q: admissions email address, intent: contact, facts: [admissions@christuniversity.in]}
+- {q: library website, intent: library, facts: [library.christuniversity.in]}
+- {q: when is the open day, intent: events, facts: [21 November]}
+- {q: when is convocation, intent: events, facts: [27 May]}
+- {q: when is the next holiday, intent: events, facts: [8 November]}
+- {q: where is professor sharma, intent: faculty, facts: [KnowledgePro, Faculty Staff Room]}
+- {q: when are the admission interviews, intent: admissions, facts: [11 December]}  # labelled admissions in intents_source.yaml
+- {q: i want to talk to a person, intent: human, facts: [reception desk]}
+- {q: i feel dizzy, intent: urgent, facts: [Health Centre, Basement]}
+- {q: hello, intent: greeting, facts: [Central Block assistant]}
+- {q: what is the weather today, intent: out_of_scope, facts: [only help with Central Block]}
+- {q: who are you, intent: smalltalk, facts: [Central Block assistant]}
+- {q: how do I get to the library by stairs, intent: navigate, facts: [stairs]}
+- {q: where is the mba department, intent: navigate, facts: [2nd floor]}
+- {q: where is the faculty staff room, intent: navigate, facts: [8th floor]}
+- {q: when is magnificat, intent: events, facts: [5 December]}

@@ -1,0 +1,260 @@
+# Retrieval gold set: query -> relevant chunk-id prefixes.
+# 40 course queries are templated from 40 seeded-random courses (seed 42); 20 are hand-written.
+- q: what is the Master of Science Strategic Management (Interdisciplinary Masters
+    Programme) programme about
+  gold:
+  - 'course:240:'
+  kind: course (templated)
+- q: what will I study in Master of Law (LLM) Intellectual Property and Trade Law
+  gold:
+  - 'course:125:'
+  kind: course (templated)
+- q: career options after Master of Science Computer Science and Applications
+  gold:
+  - 'course:54:'
+  kind: course (templated)
+- q: describe the Doctor of Philosophy (PhD) in Political Science course
+  gold:
+  - 'course:471:'
+  kind: course (templated)
+- q: what are the highlights of Master of Science Statistics
+  gold:
+  - 'course:452:'
+  kind: course (templated)
+- q: what is the Master of Business Administration (MBA) programme about
+  gold:
+  - 'course:334:'
+  kind: course (templated)
+- q: what will I study in Master of Science Actuarial Science
+  gold:
+  - 'course:238:'
+  kind: course (templated)
+- q: career options after Master of Arts (Applied Economics) (one year)
+  gold:
+  - 'course:965:'
+  kind: course (templated)
+- q: describe the Master of Social Work Clinical and Community Practice course
+  gold:
+  - 'course:199:'
+  kind: course (templated)
+- q: what are the highlights of Doctor of Philosophy (PhD) in Music
+  gold:
+  - 'course:635:'
+  kind: course (templated)
+- q: what is the Bachelor of Law (BBA LLB) (Honours) programme about
+  gold:
+  - 'course:127:'
+  kind: course (templated)
+- q: what will I study in Bachelor of Law (BA LLB) (Honours)
+  gold:
+  - 'course:126:'
+  kind: course (templated)
+- q: career options after Master of Social Work Human Resource Development and Management
+  gold:
+  - 'course:200:'
+  kind: course (templated)
+- q: describe the Doctor of Philosophy (PhD) in Commerce course
+  gold:
+  - 'course:45:'
+  kind: course (templated)
+- q: what are the highlights of Doctor of Philosophy (PhD) in Statistics
+  gold:
+  - 'course:455:'
+  kind: course (templated)
+- q: what is the Master of Science (Artificial Intelligence and Machine Learning)
+    (one year) programme about
+  gold:
+  - 'course:955:'
+  kind: course (templated)
+- q: what will I study in Master of Science (Educational Psychology) (one year)
+  gold:
+  - 'course:972:'
+  kind: course (templated)
+- q: career options after Master of Science Educational Psychology
+  gold:
+  - 'course:440:'
+  kind: course (templated)
+- q: describe the Bachelor of Science (Accountancy and Analytics ) Integrated Masters
+    Programme course
+  gold:
+  - 'course:630:'
+  kind: course (templated)
+- q: what are the highlights of Post Graduate Diploma in International Education
+  gold:
+  - 'course:451:'
+  kind: course (templated)
+- q: what is the Bachelor of Arts (Communication and Media, English) programme about
+  gold:
+  - 'course:750:'
+  kind: course (templated)
+- q: what will I study in Bachelor of Arts (Psychology, Economics)
+  gold:
+  - 'course:558:'
+  kind: course (templated)
+- q: career options after Master of Arts (Media and Communication Studies) (one year)
+  gold:
+  - 'course:968:'
+  kind: course (templated)
+- q: describe the Bachelor of Commerce (Work Integrated) course
+  gold:
+  - 'course:618:'
+  kind: course (templated)
+- q: what are the highlights of Master of Science
+  gold:
+  - 'course:656:'
+  kind: course (templated)
+- q: what is the Bachelor of Hotel Management (BHM) programme about
+  gold:
+  - 'course:102:'
+  kind: course (templated)
+- q: what will I study in Bachelor of Arts (Theatre Studies, Creative Media)
+  gold:
+  - 'course:602:'
+  kind: course (templated)
+- q: career options after Integrated Teacher Education Programme (ITEP) BSc BEd
+  gold:
+  - 'course:942:'
+  kind: course (templated)
+- q: describe the Doctor of Philosophy (PhD) in Management course
+  gold:
+  - 'course:181:'
+  kind: course (templated)
+- q: what are the highlights of Bachelor of Commerce (Strategic Finance)
+  gold:
+  - 'course:588:'
+  kind: course (templated)
+- q: what is the Doctor of Philosophy (PhD) in Data Science programme about
+  gold:
+  - 'course:448:'
+  kind: course (templated)
+- q: what will I study in Master of Science Sustainable Development (Interdisciplinary
+    Masters Programme)
+  gold:
+  - 'course:405:'
+  kind: course (templated)
+- q: career options after Doctor of Philosophy (PhD) in Performing Arts
+  gold:
+  - 'course:944:'
+  kind: course (templated)
+- q: describe the Master of Science Counselling Psychology course
+  gold:
+  - 'course:174:'
+  kind: course (templated)
+- q: what are the highlights of Master of Science Innovation and Entrepreneurship
+  gold:
+  - 'course:239:'
+  kind: course (templated)
+- q: what is the Integrated Master of Business Administration programme about
+  gold:
+  - 'course:935:'
+  kind: course (templated)
+- q: what will I study in Master of Commerce (MCom)
+  gold:
+  - 'course:89:'
+  kind: course (templated)
+- q: career options after Master of Arts (Counseling and Spirituality)
+  gold:
+  - 'course:158:'
+  kind: course (templated)
+- q: describe the Master of Arts Media and Communication Studies course
+  gold:
+  - 'course:145:'
+  kind: course (templated)
+- q: what are the highlights of Doctor of Philosophy (PhD) in Zoology
+  gold:
+  - 'course:438:'
+  kind: course (templated)
+- q: where can I print documents
+  gold:
+  - faq:faq_print
+  - place:xerox_shop
+  kind: hand-written
+- q: is there a lost and found
+  gold:
+  - faq:faq_lost
+  - place:lost_and_found
+  kind: hand-written
+- q: where can I get first aid
+  gold:
+  - faq:faq_medical
+  - place:health_centre
+  kind: hand-written
+- q: where do I pay my fees
+  gold:
+  - faq:faq_fees_payment
+  - place:accounts_office
+  kind: hand-written
+- q: what are the library timings
+  gold:
+  - faq:faq_library_hours
+  kind: hand-written
+- q: how do I find a faculty member
+  gold:
+  - faq:faq_faculty
+  kind: hand-written
+- q: where can I get coffee or snacks
+  gold:
+  - faq:faq_coffee
+  - place:ccd
+  - place:gourmet
+  kind: hand-written
+- q: which floor has the media studios
+  gold:
+  - faq:faq_studios
+  - place:sky_view_studio
+  - place:green_view_studio
+  - place:experiential_media_lab
+  kind: hand-written
+- q: when is the open day
+  gold:
+  - faq:faq_open_day
+  - event:0
+  kind: hand-written
+- q: when is convocation
+  gold:
+  - event:17
+  kind: hand-written
+- q: when are the admission interviews
+  gold:
+  - event:5
+  - event:15
+  - event:16
+  kind: hand-written
+- q: when is founders day
+  gold:
+  - event:6
+  kind: hand-written
+- q: where is the department of law
+  gold:
+  - place:sol_4
+  - place:sol_5
+  kind: hand-written
+- q: where is the department of social work
+  gold:
+  - place:dept_social_work
+  kind: hand-written
+- q: which floor is computer science on
+  gold:
+  - faq:faq_cs_floor
+  - place:dept_computer_science
+  kind: hand-written
+- q: what are the office timings
+  gold:
+  - faq:faq_office_hours
+  kind: hand-written
+- q: where is the conference room
+  gold:
+  - place:conference_room
+  kind: hand-written
+- q: where is the research and development cell
+  gold:
+  - place:room_106
+  kind: hand-written
+- q: when is the theatre festival
+  gold:
+  - event:7
+  kind: hand-written
+- q: when is the athletic meet
+  gold:
+  - event:2
+  kind: hand-written
