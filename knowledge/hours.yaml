@@ -1,0 +1,23 @@
+# Opening hours. Times are 24h, intervals are [open, close).
+# Precedence (engines/timings.py): holiday > working Saturday > third Saturday
+# > vacation > Sunday > Mon-Sat.
+offices:
+  verified: true
+  weekday: ["09:00", "17:00"]
+  lunch: ["13:00", "14:00"]
+  third_saturday: closed
+  sunday: closed          # ASSUMPTION (spec §15 item 10)
+  vacation: weekday       # ASSUMPTION: offices keep normal hours in vacations
+library:
+  verified: true
+  weekday: ["08:00", "21:00"]
+  third_saturday: ["09:00", "18:00"]
+  sunday: ["10:00", "18:00"]
+  vacation: ["08:00", "17:00"]
+services:                 # CCD, Gourmet, Health Centre, shops, Lost & Found
+  verified: false         # ASSUMPTION: office hours; kiosk asks visitors to confirm
+  weekday: ["09:00", "17:00"]
+  lunch: ["13:00", "14:00"]
+  third_saturday: closed
+  sunday: closed
+  vacation: weekday
