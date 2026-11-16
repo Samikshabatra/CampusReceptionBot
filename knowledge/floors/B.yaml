@@ -1,0 +1,15 @@
+# Floor B layout, transcribed from data/raw/central_block_map.webp.
+# Rows of cells (map order); span = relative width/height; gap = blank.
+floor: "B"
+title: "Services & Facilities"
+seating: false
+rows:
+  - box: [0, 0, 14, 60]
+    direction: vertical
+    cells: [{"id": "health_centre", "span": 2}, {"id": "lost_and_found", "span": 2}, "gw", "lw"]
+  - box: [14, 0, 86, 10]
+    direction: horizontal
+    cells: ["gap", {"id": "gourmet", "span": 3}, "gap"]
+  - box: [86, 0, 100, 60]
+    direction: vertical
+    cells: ["stationery_shop", "xerox_shop"]
