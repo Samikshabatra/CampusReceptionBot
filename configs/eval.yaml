@@ -1,0 +1,8 @@
+# Evaluation settings (scripts/evaluate.py).
+app_config: configs/app.yaml
+results_dir: eval/results
+mlflow_uri: sqlite:///mlflow.db
+use_live_llm: true                          # measure raw LLM drafts vs the verifier if Ollama is up
+asr_dir: data/eval/asr                      # real recordings (file,text) - preferred when present
+asr_synthetic_dir: data/eval/asr_synthetic  # Windows-voice clips from scripts/make_synthetic_asr.ps1
+sus_csv: eval/datasets/sus_responses.csv
