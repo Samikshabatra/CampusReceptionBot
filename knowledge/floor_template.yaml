@@ -1,0 +1,40 @@
+# Shared by every floor: a 100 x 60 grid (origin top-left, same orientation as the
+# printed map). Rooms sit around the edge, the corridor is a ring, and the two
+# staircases with their lifts sit in the centre.
+width: 100
+height: 60
+nodes:
+  - {name: tl, x: 17, y: 13}
+  - {name: tc, x: 50, y: 13}
+  - {name: tr, x: 83, y: 13}
+  - {name: ml, x: 17, y: 30}
+  - {name: mr, x: 83, y: 30}
+  - {name: bl, x: 17, y: 47}
+  - {name: bc, x: 50, y: 47}
+  - {name: br, x: 83, y: 47}
+  - {name: lift_top, x: 65, y: 20}
+  - {name: lift_bottom, x: 65, y: 40}
+  - {name: stairs_top, x: 37, y: 20}
+  - {name: stairs_bottom, x: 37, y: 40}
+edges:
+  - [tl, tc]
+  - [tc, tr]
+  - [tr, mr]
+  - [mr, br]
+  - [br, bc]
+  - [bc, bl]
+  - [bl, ml]
+  - [ml, tl]
+  - [lift_top, tc]
+  - [lift_bottom, bc]
+  - [stairs_top, tc]
+  - [stairs_top, tl]
+  - [stairs_bottom, bc]
+  - [stairs_bottom, bl]
+staircases:
+  - {stairs_box: [35, 17, 62, 23], lift_box: [62, 17, 68, 23], label: top}
+  - {stairs_box: [35, 37, 62, 43], lift_box: [62, 37, 68, 43], label: bottom}
+# The kiosk stands at the Reception on the Ground floor (in front of the counter).
+kiosk: {name: kiosk, x: 70, y: 46}
+kiosk_floor: "G"
+kiosk_links: [bc, br, lift_bottom]
