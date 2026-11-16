@@ -289,14 +289,18 @@ class Connection:
             return r
 
     async def set_language(self, code: object, t: float) -> None:
-        """The visitor picked a language: confirm it and greet them in it."""
+        """The visitor picked a language: confirm it and greet them in it.
+
+        Picking the language already in use mid-conversation changes nothing; picking
+        it on the welcome screen still starts the conversation with a greeting.
+        """
         lang = as_lang(code)
         changed = lang != self.session.lang
         self.session.lang = lang
         await self.ws.send_json({"type": "language", "lang": lang})
-        if not changed:
-            return
         was_active = self.session.active
+        if was_active and not changed:
+            return
         self.session.on_input(t)
         if not was_active:
             self._emit("session_start", session_id=self.session.id, started_by="touch")

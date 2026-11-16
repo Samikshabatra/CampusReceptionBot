@@ -122,6 +122,7 @@ def test_unknown_language_falls_back_to_english(assistant: Assistant) -> None:
         ws.receive_json()
         ws.send_json({"type": "language", "lang": "fr", "t": 1.0})
         assert until(ws, "language") == {"type": "language", "lang": "en"}
+        assert until(ws, "response")["data"]["speech"].startswith("Good")  # English greeting
         ws.send_json({"type": "ask", "text": "where is the library", "t": 2.0})
         assert not until(ws, "response")["data"]["speech"].startswith("[")
 
@@ -169,3 +170,14 @@ def test_tts_endpoint(assistant: Assistant) -> None:
         assert r.content == "hi:नमस्ते".encode()
         assert c.get("/api/tts", params={"text": "hi", "lang": "fr"}).status_code == 503
         assert c.get("/api/tts", params={"text": " ", "lang": "hi"}).status_code == 400
+
+
+def test_same_language_mid_conversation_is_quiet(assistant: Assistant) -> None:
+    with make_client(assistant, FakeTranslator()) as c, c.websocket_connect("/ws") as ws:
+        ws.receive_json()
+        ws.send_json({"type": "language", "lang": "hi", "t": 1.0})
+        until(ws, "response")
+        ws.send_json({"type": "language", "lang": "hi", "t": 2.0})
+        assert until(ws, "language") == {"type": "language", "lang": "hi"}
+        ws.send_json({"type": "ask", "text": HINDI_Q, "t": 3.0})
+        assert until(ws, "response")["data"]["intent"] == "navigate"  # no second greeting first
