@@ -370,6 +370,7 @@ function floorPicker(onRoute, active) {
   }, f)));
   showMap(active);
 }
+const floorLabel = (f) => (f === "G" ? t("ground_floor") : f === "B" ? t("basement") : t("floor_n", { n: f }));
 function renderRoute(r) {
   route = r;
   const d = r.card.data;
@@ -386,7 +387,7 @@ function renderRoute(r) {
       el("li", { class: "step step--start" }, el("span", { class: "step-icon", html: icon("pin") }), el("span", {}, el("b", {}, t("start_reception")), t("ground_floor"))),
       steps.map((s) => el("li", { class: "step" }, el("span", { class: "step-icon", html: icon(stepIcon(s)) }), el("span", {}, s))),
       el("li", { class: "step step--end" }, el("span", { class: "step-icon", html: icon("flag") }),
-        el("span", {}, el("b", {}, t("destination", { name })), dest ? dest.title : "", last ? el("span", { class: "note" }, el("br"), last) : null))),
+        el("span", {}, el("b", {}, t("destination", { name })), dest ? floorLabel(dest.floor) : "", last ? el("span", { class: "note" }, el("br"), last) : null))),
     el("p", { class: "nav-meta" }, `${t("floors_on_route")} ${floors.map((f) => (f === "G" ? t("ground") : f === "B" ? t("basement") : f)).join(" → ")}`),
     el("div", { class: "row-actions" }, el("button", { class: "pill-btn", type: "button", onclick: () => { route = null; showPlaceBrowser(); } }, iconNode("search"), t("find_another"))));
   floorPicker(floors, dest ? dest.floor : "G");
