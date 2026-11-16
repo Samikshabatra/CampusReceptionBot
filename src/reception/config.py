@@ -49,6 +49,7 @@ class SpeechConfig(BaseModel):
     compute_type: str = "int8"
     beam_size: int = 1
     lead_in_s: float = 0.3  # silence added before speech so the first syllable is not lost
+    voice_margin_s: float = 0.25  # audio kept around the detected voice; the rest is cut
     max_new_tokens: int = 128  # questions are short; stops runaway decoding
     vad_rms_threshold: float = 0.015
     voice_threshold: float = 0.5
