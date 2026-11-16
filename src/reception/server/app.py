@@ -305,6 +305,10 @@ class Connection:
         started = time.perf_counter()
         tr = await run_in_threadpool(self.state.transcriber.transcribe, pcm)
         stt_ms = (time.perf_counter() - started) * 1000
+        if tr.is_noise:
+            await self.ws.send_json({"type": "noise"})  # only background noise: nothing to answer
+            await self.ws.send_json({"type": "state", "state": "listening"})
+            return
         await self.ws.send_json({"type": "transcript", "text": tr.text, "stt_ms": round(stt_ms)})
         if not tr.text:
             await self.ws.send_json({"type": "state", "state": "listening"})
