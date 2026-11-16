@@ -33,12 +33,14 @@ uv run python scripts/run_kiosk.py                      # http://127.0.0.1:8765 
 - Open the kiosk in Chrome full screen and allow the camera and microphone. Without them, typing and tapping still work.
 - Open questions use a local LLM through [Ollama](https://ollama.com) (`llm.model` in `configs/app.yaml`, default `llama3.2:3b`). Without Ollama, add `--offline`: structured answers still work and open questions hand over to reception.
 - Terminal chat: `uv run python scripts/chat.py [--offline]`.
-- First voice use downloads the multilingual Whisper `small` model (~480 MB); first start downloads the `bge-small-en-v1.5` embedding model.
-- Hindi and Kannada need the offline translation model (NLLB-200 distilled 600M, int8, ~600 MB) in `models/nllb-600m-ct2-int8`:
+- First English voice use downloads Whisper `base.en` (~145 MB); first start downloads the `bge-small-en-v1.5` embedding model.
+- Hindi and Kannada need three local models (all in the git-ignored `models/` folder):
   ```bash
-  uv run hf download JustFrederik/nllb-200-distilled-600M-ct2-int8 --local-dir models/nllb-600m-ct2-int8
+  uv run hf download JustFrederik/nllb-200-distilled-600M-ct2-int8 --local-dir models/nllb-600m-ct2-int8   # translation, ~600 MB
+  uv run hf download collabora/faster-whisper-small-hindi --local-dir models/whisper-hindi-small-ct2         # Hindi speech, ~480 MB
+  uv run hf download ukta-app/whisper-kannada-ct2 --local-dir models/whisper-kannada-ct2                    # Kannada speech (IIT Madras whisper-kannada-small), ~250 MB
   ```
-  Without it the kiosk still works and answers in English.
+  Without the translation model the kiosk answers in English; without a speech model that language falls back to multilingual Whisper `small`, which recognises Kannada poorly.
 
 ## Update the knowledge (no retraining)
 Everything the kiosk says comes from `knowledge/`:
