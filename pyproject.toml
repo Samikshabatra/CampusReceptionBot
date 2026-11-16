@@ -1,0 +1,73 @@
+[project]
+name = "reception"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Samiksha Batra", email = "samikshabatra18@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.162.0",
+    "fastembed>=0.9.1",
+    "faster-whisper>=1.2.1",
+    "httpx>=0.28.1",
+    "jiwer>=4.0.0",
+    "joblib>=1.6.0",
+    "mlflow>=3.18.0",
+    "networkx>=3.7",
+    "numpy>=2.5.4",
+    "opencv-python-headless>=4.10,<5",
+    "pydantic>=2.14.2",
+    "pyyaml>=6.0.3",
+    "qrcode>=8.2",
+    "rank-bm25>=0.2.2",
+    "rapidfuzz>=3.14.6",
+    "scikit-learn>=1.9.1",
+    "tzdata>=2026.6",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[project.scripts]
+reception-chat = "reception.cli:main"
+
+[build-system]
+requires = ["uv_build>=0.11.7,<0.12.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "black>=26.10.1",
+    "httpx>=0.28.1",
+    "mypy>=2.4.1",
+    "pytest>=9.2.0",
+    "ruff>=0.17.3",
+    "types-pyyaml>=6.0.12.20261103",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+markers = ["slow: needs embedding model download / training"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.black]
+line-length = 100
+
+[tool.mypy]
+python_version = "3.12"
+disallow_untyped_defs = true
+ignore_missing_imports = true
+plugins = ["pydantic.mypy"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E501"]
+"src/reception/ui/floor_svg.py" = ["E501"]
+"src/reception/eval/run.py" = ["E501"]
+"scripts/evaluate.py" = ["E501"]

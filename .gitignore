@@ -1,0 +1,14 @@
+data/
+models/
+mlruns/
+mlflow.db
+.env
+__pycache__/
+.venv/
+*.joblib
+.superpowers/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.claude/
+*.log
