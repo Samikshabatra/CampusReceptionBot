@@ -16,8 +16,8 @@
   --shadow: 0 6px 18px rgba(107, 18, 32, 0.07);
   --r-lg: 18px;
   --r-md: 12px;
-  --serif: "Playfair Display", Georgia, "Times New Roman", serif;
-  --sans: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --serif: "Playfair Display", "Noto Serif Devanagari", "Noto Serif Kannada", Georgia, "Times New Roman", serif;
+  --sans: "Source Sans 3", "Noto Sans Devanagari", "Noto Sans Kannada", "Segoe UI", system-ui, sans-serif;
   --s-1: clamp(0.9rem, 0.85rem + 0.2vw, 1rem);
   --s0: clamp(1rem, 0.95rem + 0.3vw, 1.15rem);
   --s1: clamp(1.2rem, 1.05rem + 0.5vw, 1.45rem);
@@ -81,7 +81,17 @@ body[data-view="help"] .view-help { display: grid; }
 .welcome-photo { background: linear-gradient(90deg, transparent 55%, var(--cream) 100%), url("/static/img/building.jpg") center / cover no-repeat; }
 .welcome-body { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1rem 2rem 2rem; min-height: 0; }
 .welcome-body h1 { font-family: var(--serif); font-weight: 700; font-size: var(--s3); line-height: 1.08; margin: 0 0 0.5rem; background: linear-gradient(180deg, var(--ink) 0 50%, var(--maroon-deep) 50%); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.welcome-sub { font-size: var(--s1); margin: 0 0 1.2rem; }
+.welcome-sub { font-size: var(--s1); margin: 0 0 0.9rem; }
+/* Language choice: on the welcome screen and in the top bar */
+.lang-picker { margin: 0 0 1rem; }
+.lang-title { margin: 0 0 0.45rem; color: var(--muted); font-size: var(--s-1); }
+.lang-options { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+.lang-options button { min-width: 8.5rem; padding: 0.6rem 1.2rem; border-radius: 999px; border: 2px solid var(--line); background: #fff; font-weight: 700; font-size: var(--s1); color: var(--maroon-deep); box-shadow: var(--shadow); }
+.lang-options button.is-active { background: var(--maroon); border-color: var(--maroon); color: #fff; }
+.lang-switch { display: flex; border: 1px solid var(--line); border-radius: 999px; background: #fff; overflow: hidden; }
+.lang-switch button { border: 0; background: transparent; padding: 0.35rem 0.75rem; font-weight: 600; color: var(--maroon-deep); }
+.lang-switch button + button { border-left: 1px solid var(--line); }
+.lang-switch button.is-active { background: var(--maroon); color: #fff; }
 .voice { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 0.9rem; }
 .wave { width: 9rem; height: 2.6rem; background: repeating-linear-gradient(90deg, var(--maroon) 0 3px, transparent 3px 8px); -webkit-mask: radial-gradient(ellipse at center, #000 0 40%, transparent 72%); mask: radial-gradient(ellipse at center, #000 0 40%, transparent 72%); opacity: 0.55; }
 .mic-big { width: 6.2rem; height: 6.2rem; border-radius: 50%; border: 10px solid #f3dcd8; background: radial-gradient(circle at 35% 30%, #a52a3a, var(--maroon-deep)); color: #fff; display: grid; place-items: center; box-shadow: 0 10px 28px rgba(107, 18, 32, 0.28); }
@@ -284,7 +294,8 @@ body[data-mic="on"] .mic-hint { color: var(--maroon); font-weight: 700; }
   .nav-grid, .course-grid, .events-grid { grid-template-columns: 1fr; padding: 0.4rem 1rem 1rem; }
   .view-head { padding: 1rem; }
   .view-head--split { flex-direction: column; }
-  .brand-words, .brand-rule, .clock { display: none; }
+  .brand-words, .brand-rule, .clock, .brand-app { display: none; }
+  .lang-options button { min-width: 6.5rem; }
   .tiles { grid-template-columns: repeat(2, 1fr); }
 }
 
