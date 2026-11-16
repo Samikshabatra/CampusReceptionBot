@@ -33,7 +33,12 @@ uv run python scripts/run_kiosk.py                      # http://127.0.0.1:8765 
 - Open the kiosk in Chrome full screen and allow the camera and microphone. Without them, typing and tapping still work.
 - Open questions use a local LLM through [Ollama](https://ollama.com) (`llm.model` in `configs/app.yaml`, default `llama3.2:3b`). Without Ollama, add `--offline`: structured answers still work and open questions hand over to reception.
 - Terminal chat: `uv run python scripts/chat.py [--offline]`.
-- First voice use downloads the Whisper `base.en` model (~145 MB); first start downloads the `bge-small-en-v1.5` embedding model.
+- First voice use downloads the multilingual Whisper `small` model (~480 MB); first start downloads the `bge-small-en-v1.5` embedding model.
+- Hindi and Kannada need the offline translation model (NLLB-200 distilled 600M, int8, ~600 MB) in `models/nllb-600m-ct2-int8`:
+  ```bash
+  uv run hf download JustFrederik/nllb-200-distilled-600M-ct2-int8 --local-dir models/nllb-600m-ct2-int8
+  ```
+  Without it the kiosk still works and answers in English.
 
 ## Update the knowledge (no retraining)
 Everything the kiosk says comes from `knowledge/`:
@@ -47,13 +52,25 @@ Everything the kiosk says comes from `knowledge/`:
 
 Edit a file, then press **Reload knowledge** on `/admin` (or restart). A broken file is reported and the old knowledge keeps serving.
 
+## Languages: English, Hindi, Kannada
+- The visitor picks **English / हिन्दी / ಕನ್ನಡ** on the welcome screen (or in the top bar at any time). The kiosk greets them in that language and keeps the whole conversation in it: screen text, answers, route steps and the spoken voice. Every new visitor starts in English.
+- Questions in Hindi or Kannada are translated to English on the kiosk (NLLB-200 through CTranslate2, fully offline), answered by the same verified engines, and the answer is translated back. Facts must survive translation: a sentence whose numbers change (room numbers, floors, fees, times) is kept in English rather than shown wrong.
+- Speech recognition runs Whisper in the chosen language. Hindi and Kannada answers are read aloud with Microsoft neural voices (`edge-tts`, needs internet; only the kiosk's answer text is sent, never what the visitor said). If that service is unreachable the browser voice is used.
+- Names of places, programmes and events stay as published.
+
+## Listening, interrupting and background noise
+- The microphone is **off** until the visitor taps it (also right after the greeting). It turns off again after each question and whenever an answer is shown.
+- Tapping the microphone while the kiosk is talking stops it at once and starts listening; typing in the question box also stops it.
+- Background noise is filtered twice: the browser learns the room's noise level and only records sounds clearly above it, and the server checks with Silero voice detection that real speech is present before transcribing. Noise-only recordings get a "please speak a little closer" hint instead of a wrong answer.
+
 ## How it works
 - **Vision**: browser camera → OpenCV face detection (no recognition, frames never stored) → an approach rule (centred, getting bigger or close, staying) greets once; people walking past are ignored.
-- **Speech**: browser microphone with voice-activity detection → faster-whisper on the server → text. Replies are spoken with the OS voice.
+- **Speech**: browser microphone with voice-activity detection → Silero voice check → faster-whisper on the server → text. English replies use the OS voice; Hindi and Kannada use neural voices from `/api/tts`.
+- **Translation**: offline NLLB-200 (CTranslate2, int8) between English, Hindi and Kannada, with a number guard.
 - **Understanding**: intent classifier (bge-small embeddings + logistic regression) + entity extraction (rooms, places with typo tolerance, courses, fee categories) + conversation memory for follow-ups.
 - **Answers**: deterministic engines for navigation (graph over the floor layouts), timings, courses/fees, contacts, events; grounded RAG (BM25 + embeddings) for open questions, with a verifier that rejects any number, email, URL or room not present in the cited passages.
 - **Handover**: unverifiable, unknown or urgent requests show reception contacts with QR codes.
-- **Analytics**: anonymised SQLite log (phone numbers and emails masked) and a PIN-protected dashboard.
+- **Analytics**: anonymised SQLite log (phone numbers and emails masked, questions stored in English with their language) and a PIN-protected dashboard.
 
 ## Development
 `./check.sh` runs pytest, ruff, black and mypy. Tests: `uv run pytest`.
