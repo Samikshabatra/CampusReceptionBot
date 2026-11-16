@@ -86,6 +86,8 @@ async function load() {
   stat(s.handover_queries.length, "handed to reception");
   const hours = Object.entries(s.by_hour).sort((a, b) => a[0] - b[0]).map(([k, v]) => ({ hour: `${k}:00`, count: v }));
   const modes = Object.entries(s.by_mode).map(([k, v]) => ({ mode: k, count: v }));
+  const LANG_NAMES = { en: "English", hi: "Hindi", kn: "Kannada" };
+  const langs = Object.entries(s.by_language || {}).map(([k, v]) => ({ language: LANG_NAMES[k] || k, count: v }));
   $("#main").replaceChildren(stats,
     bars("Most common questions", s.top_queries, "text"),
     bars("Most requested places", s.top_locations, "place_id"),
@@ -93,7 +95,8 @@ async function load() {
     table("Failed questions", s.failed_queries),
     table("Needed a person", s.handover_queries),
     bars("Busy hours", hours, "hour"),
-    bars("How visitors asked", modes, "mode"));
+    bars("How visitors asked", modes, "mode"),
+    bars("Languages", langs, "language"));
 }
 $("#login").addEventListener("submit", (e) => { e.preventDefault(); pin = $("#pin").value || pin; sessionStorage.setItem("pin", pin); load().catch(() => {}); });
 $("#export").addEventListener("click", async () => {
