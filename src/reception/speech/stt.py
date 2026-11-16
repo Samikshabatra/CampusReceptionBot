@@ -66,11 +66,18 @@ class Transcriber:
             )
         return self._model
 
-    def transcribe(self, audio: np.ndarray) -> Transcript:
+    def prompt_for(self, language: str) -> str | None:
+        """Vocabulary hint for Whisper in ``language`` (English names, or native script)."""
+        if language == "en":
+            return self.cfg.vocabulary
+        return self.cfg.native_hints.get(language)
+
+    def transcribe(self, audio: np.ndarray, language: str = "en") -> Transcript:
         """Transcribe one utterance.
 
         Args:
             audio: float32 mono samples at 16 kHz.
+            language: Language the visitor chose ("en", "hi" or "kn").
 
         Returns:
             Text (empty when nothing was said) with mean log-probability.
@@ -82,10 +89,10 @@ class Transcriber:
             return Transcript("", 0.0, duration, is_noise=True)  # noise only: never reaches Whisper
         segments, _ = self._load().transcribe(
             audio,
-            language="en",
+            language=language,
             beam_size=self.cfg.beam_size,
             vad_filter=True,
-            initial_prompt=self.cfg.vocabulary,
+            initial_prompt=self.prompt_for(language),
             condition_on_previous_text=False,
         )
         segs = [

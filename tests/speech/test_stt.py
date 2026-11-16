@@ -28,3 +28,15 @@ def test_too_short_audio_skipped_without_model() -> None:
     t = Transcriber(SpeechConfig())
     out = t.transcribe(np.zeros(100, dtype=np.float32))
     assert out.text == "" and t._model is None
+
+
+def test_prompt_matches_the_chosen_language() -> None:
+    t = Transcriber(SpeechConfig())
+    assert "CHRIST University" in (t.prompt_for("en") or "")
+    assert "पुस्तकालय" in (t.prompt_for("hi") or "")
+    assert "ಗ್ರಂಥಾಲಯ" in (t.prompt_for("kn") or "")
+    assert t.prompt_for("fr") is None
+
+
+def test_default_model_is_multilingual() -> None:
+    assert not SpeechConfig().model.endswith(".en")
