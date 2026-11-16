@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 from reception.config import SpeechConfig
-from reception.speech.stt import Transcriber, decode_pcm
+from reception.speech.stt import Transcriber, crop_to_voice, decode_pcm, drop_repeats
 
 
 def test_decode_pcm_roundtrip() -> None:
@@ -50,3 +50,16 @@ def test_each_language_gets_its_own_model(tmp_path: Path) -> None:
     assert t.model_for("kn") == str(tmp_path / "kn")
     assert t.model_for("hi") == cfg.fallback_model  # folder not downloaded
     assert not cfg.fallback_model.endswith(".en")
+
+
+def test_drop_repeats() -> None:
+    assert drop_repeats("कहाँ है कहाँ है") == "कहाँ है"
+    assert drop_repeats("where is room 812") == "where is room 812"
+    assert drop_repeats("") == ""
+
+
+def test_crop_to_voice_cuts_silence_and_adds_lead_in() -> None:
+    cfg = SpeechConfig(lead_in_s=0.25, voice_margin_s=0.25)
+    audio = np.zeros(5 * 16000, dtype=np.float32)
+    out = crop_to_voice(audio, [{"start": 16000, "end": 32000}], cfg)
+    assert len(out) == 4000 + (36000 - 12000)

@@ -24,15 +24,40 @@ class Transcript:
     is_noise: bool = False
 
 
+def _voice_stamps(audio: np.ndarray, cfg: SpeechConfig) -> list[dict[str, int]]:
+    from faster_whisper.vad import VadOptions, get_speech_timestamps
+
+    return list(get_speech_timestamps(audio, VadOptions(threshold=cfg.voice_threshold)))
+
+
 def speech_seconds(audio: np.ndarray, cfg: SpeechConfig) -> float:
     """Seconds of real human voice in ``audio`` (Silero VAD, bundled with faster-whisper).
 
     Background hum, clatter and music score low, so they add little or nothing.
     """
-    from faster_whisper.vad import VadOptions, get_speech_timestamps
+    return sum(s["end"] - s["start"] for s in _voice_stamps(audio, cfg)) / SAMPLE_RATE
 
-    stamps = get_speech_timestamps(audio, VadOptions(threshold=cfg.voice_threshold))
-    return sum(s["end"] - s["start"] for s in stamps) / SAMPLE_RATE
+
+def crop_to_voice(audio: np.ndarray, stamps: list[dict[str, int]], cfg: SpeechConfig) -> np.ndarray:
+    """Keep only the stretch with voice, plus a short margin, behind a silent lead-in.
+
+    Whisper tends to invent words in long trailing silence; the lead-in keeps the
+    first syllable from being clipped.
+    """
+    margin = int(cfg.voice_margin_s * SAMPLE_RATE)
+    start = max(0, stamps[0]["start"] - margin)
+    end = min(len(audio), stamps[-1]["end"] + margin)
+    lead_in = np.zeros(int(cfg.lead_in_s * SAMPLE_RATE), dtype=np.float32)
+    return np.concatenate([lead_in, audio[start:end]])
+
+
+def drop_repeats(text: str) -> str:
+    """Collapse a transcript that is the same phrase said twice ("X X" -> "X")."""
+    words = text.split()
+    n = len(words)
+    if n >= 2 and n % 2 == 0 and words[: n // 2] == words[n // 2 :]:
+        return " ".join(words[: n // 2])
+    return text
 
 
 def decode_pcm(b64: str) -> np.ndarray:
@@ -96,11 +121,12 @@ class Transcriber:
         duration = len(audio) / SAMPLE_RATE
         if len(audio) < _MIN_SAMPLES:
             return Transcript("", 0.0, duration)
-        if speech_seconds(audio, self.cfg) < self.cfg.min_voice_s:
+        stamps = _voice_stamps(audio, self.cfg)
+        voiced = sum(s["end"] - s["start"] for s in stamps) / SAMPLE_RATE
+        if voiced < self.cfg.min_voice_s:
             return Transcript("", 0.0, duration, is_noise=True)  # noise only: never reaches Whisper
-        lead_in = np.zeros(int(self.cfg.lead_in_s * SAMPLE_RATE), dtype=np.float32)
         segments, _ = self._load(language).transcribe(
-            np.concatenate([lead_in, audio]),
+            crop_to_voice(audio, stamps, self.cfg),
             language=language,
             beam_size=self.cfg.beam_size,
             vad_filter=True,
@@ -115,6 +141,6 @@ class Transcriber:
             if s.no_speech_prob < self.cfg.no_speech_threshold
             and s.avg_logprob >= self.cfg.min_avg_logprob
         ]
-        text = " ".join(s.text.strip() for s in segs).strip()
+        text = drop_repeats(" ".join(s.text.strip() for s in segs).strip())
         logprob = float(np.mean([s.avg_logprob for s in segs])) if segs else 0.0
         return Transcript(text, logprob, duration)
