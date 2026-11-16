@@ -446,7 +446,7 @@ function drawCourses() {
   const dept = departments.find((d) => d.name === courses.dept);
   $("#course-count").textContent = !courses.dept
     ? t("count_campus", { n: courses.items.length })
-    : t("count_dept", { n: courses.items.length }) + (dept && dept.floor_name ? ` · ${dept.floor_name}` : ` · ${t("not_in_block")}`);
+    : t("count_dept", { n: courses.items.length }) + (dept && dept.floor ? ` · ${floorLabel(dept.floor)}` : ` · ${t("not_in_block")}`);
   $("#level-chips").replaceChildren(...["All", "UG", "PG", "PhD"].map((lv) => el("button", {
     class: `chip${courses.level === lv ? " is-active" : ""}`, type: "button", "aria-pressed": courses.level === lv,
     onclick: () => { courses.level = lv; drawCourses(); },
@@ -489,7 +489,7 @@ async function selectCourse(id, showFees = false) {
         c.duration ? el("li", { html: icon("hourglass") + c.duration }) : null,
         el("li", { html: icon("cap") + c.level }),
         c.semesters ? el("li", { html: icon("calendar") + c.semesters }) : null,
-        el("li", {}, iconNode("pin"), dept && dept.floor_name ? dept.floor_name : t("not_in_block_cap"))),
+        el("li", {}, iconNode("pin"), dept && dept.floor ? floorLabel(dept.floor) : t("not_in_block_cap"))),
       desc, feeTable,
       c.verified ? null : el("p", { class: "warn" }, t("unconfirmed_name")),
       el("div", { class: "row-actions" },
