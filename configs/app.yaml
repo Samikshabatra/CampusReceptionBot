@@ -39,6 +39,10 @@ speech:
   compute_type: int8
   beam_size: 1
   vad_rms_threshold: 0.015
+  voice_threshold: 0.5      # Silero voice probability needed to count a frame as speech
+  min_voice_s: 0.3          # less real voice than this = background noise, ignored
+  no_speech_threshold: 0.6  # drop Whisper segments it thinks are not speech
+  min_avg_logprob: -1.0     # drop very low-confidence Whisper segments
   silence_ms: 900
   min_speech_ms: 300
   max_utterance_s: 10.0

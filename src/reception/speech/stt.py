@@ -20,6 +20,18 @@ class Transcript:
     text: str
     avg_logprob: float
     duration_s: float
+    is_noise: bool = False
+
+
+def speech_seconds(audio: np.ndarray, cfg: SpeechConfig) -> float:
+    """Seconds of real human voice in ``audio`` (Silero VAD, bundled with faster-whisper).
+
+    Background hum, clatter and music score low, so they add little or nothing.
+    """
+    from faster_whisper.vad import VadOptions, get_speech_timestamps
+
+    stamps = get_speech_timestamps(audio, VadOptions(threshold=cfg.voice_threshold))
+    return sum(s["end"] - s["start"] for s in stamps) / SAMPLE_RATE
 
 
 def decode_pcm(b64: str) -> np.ndarray:
@@ -66,6 +78,8 @@ class Transcriber:
         duration = len(audio) / SAMPLE_RATE
         if len(audio) < _MIN_SAMPLES:
             return Transcript("", 0.0, duration)
+        if speech_seconds(audio, self.cfg) < self.cfg.min_voice_s:
+            return Transcript("", 0.0, duration, is_noise=True)  # noise only: never reaches Whisper
         segments, _ = self._load().transcribe(
             audio,
             language="en",
@@ -74,7 +88,12 @@ class Transcriber:
             initial_prompt=self.cfg.vocabulary,
             condition_on_previous_text=False,
         )
-        segs = list(segments)
+        segs = [
+            s
+            for s in segments
+            if s.no_speech_prob < self.cfg.no_speech_threshold
+            and s.avg_logprob >= self.cfg.min_avg_logprob
+        ]
         text = " ".join(s.text.strip() for s in segs).strip()
         logprob = float(np.mean([s.avg_logprob for s in segs])) if segs else 0.0
         return Transcript(text, logprob, duration)

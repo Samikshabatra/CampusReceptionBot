@@ -42,6 +42,10 @@ class SpeechConfig(BaseModel):
     compute_type: str = "int8"
     beam_size: int = 1
     vad_rms_threshold: float = 0.015
+    voice_threshold: float = 0.5
+    min_voice_s: float = 0.3
+    no_speech_threshold: float = 0.6
+    min_avg_logprob: float = -1.0
     silence_ms: int = 900
     min_speech_ms: int = 300
     max_utterance_s: float = 10.0
