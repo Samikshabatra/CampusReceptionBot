@@ -1,5 +1,5 @@
 // Camera + microphone for the kiosk. Frames and audio go to the server; nothing is stored.
-import { sendRaw } from "/static/app.js?v=8";
+import { sendRaw, stopSpeaking } from "/static/app.js?v=8";
 
 const body = document.body;
 const TARGET_RATE = 16000;
@@ -81,6 +81,7 @@ function startMic(cfg) {
   let chunks = [];
   let speechMs = 0;
   let silenceMs = 0;
+  let noiseFloor = cfg.vad_rms_threshold / 2; // learned from the room while nobody speaks
   body.dataset.mic = "off";
 
   const resetUtterance = () => { collecting = false; chunks = []; speechMs = 0; silenceMs = 0; };
@@ -153,7 +154,10 @@ function startMic(cfg) {
     const ms = (chunk.length / TARGET_RATE) * 1000;
     let sq = 0;
     for (const v of chunk) sq += v * v;
-    const loud = Math.sqrt(sq / Math.max(1, chunk.length)) >= cfg.vad_rms_threshold;
+    const rms = Math.sqrt(sq / Math.max(1, chunk.length));
+    // Speech must stand out from the room's own noise (fans, chatter), not just pass a fixed level.
+    const loud = rms >= Math.max(cfg.vad_rms_threshold, noiseFloor * 3);
+    if (!loud && !collecting) noiseFloor = 0.95 * noiseFloor + 0.05 * rms;
     if (loud) { collecting = true; speechMs += ms; silenceMs = 0; }
     else if (collecting) silenceMs += ms;
     if (!collecting) return;
@@ -162,7 +166,11 @@ function startMic(cfg) {
   }
 
   for (const button of document.querySelectorAll("button[data-mic]")) {
-    button.addEventListener("click", () => (wanted ? turnOff() : turnOn()));
+    button.addEventListener("click", () => {
+      // Tapping the mic while the kiosk is talking interrupts it and starts listening.
+      if (body.dataset.speaking === "yes") { stopSpeaking(); if (!wanted) turnOn(); return; }
+      if (wanted) turnOff(); else turnOn();
+    });
   }
   // A new visitor always starts with the microphone off.
   window.addEventListener("kiosk:reset", () => { if (wanted) turnOff(); });
